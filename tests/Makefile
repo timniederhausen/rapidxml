@@ -1,58 +1,152 @@
-CC=g++
-CFLAGS=-I ../../boost -D TIXML_USE_STL -O3 -Wall -march=i686
+SHELL=bash
 
-all: run
+PROJECTS= \
+	test_allocation_1 \
+	test_allocation_2 \
+	test_comparative \
+	test_interface \
+	test_invalid \
+	test_multimodule \
+	test_no_exceptions \
+	test_nodes \
+	test_non_comparative \
+	test_size \
+	test_speed \
+	test_wchar
 
-run: build
-	cd test_speed && test_speed.exe
-	cd test_non_comparative && test_non_comparative.exe
-	cd test_comparative && test_comparative.exe
-	cd test_interface && test_interface.exe
-	cd test_multimodule && test_multimodule.exe
-	cd test_invalid && test_invalid.exe
-	cd test_no_exceptions && test_no_exceptions.exe
-	cd test_nodes && test_nodes.exe
-	cd test_size && test_size.exe
-	cd test_wchar && test_wchar.exe
+export CDEFINES=TIXML_USE_STL
 
-build: \
-test_speed/test_speed.exe \
-test_non_comparative/test_non_comparative.exe \
-test_comparative/test_comparative.exe \
-test_interface/test_interface.exe \
-test_multimodule/test_multimodule.exe \
-test_invalid/test_invalid.exe \
-test_no_exceptions/test_no_exceptions.exe \
-test_nodes/test_nodes.exe \
-test_size/test_size.exe \
-test_wchar/test_wchar.exe
+default:
+	@echo Please specify a target to make:
+	@echo "    build-g++-debug"
+	@echo "    build-g++-release"
+	@echo "    build-msvc-debug"
+	@echo "    build-msvc-release"
+	@echo "    run-g++-debug"
+	@echo "    run-g++-release"
+	@echo "    run-msvc-debug"
+	@echo "    run-msvc-release"
+	@echo "    clean"
 
-test_speed/test_speed.exe: test_speed/main.cpp other_parsers/pugixml/pugixml.cpp other_parsers/tinyxml/tinystr.cpp other_parsers/tinyxml/tinyxml.cpp other_parsers/tinyxml/tinyxmlerror.cpp other_parsers/tinyxml/tinyxmlparser.cpp
-	$(CC) $(CFLAGS) -o $@ $^
+# build g++ debug mode
+build-g++-debug: CONFIG=g++-debug
+build-g++-debug: CC=g++
+build-g++-debug: COPTIONS=-g3 -O0 -Wall
 
-test_non_comparative/test_non_comparative.exe: test_non_comparative/main.cpp
-	$(CC) $(CFLAGS) -o $@ $^
+# build g++ release mode
+build-g++-release: CONFIG=g++-release
+build-g++-release: CC=g++
+build-g++-release: COPTIONS=-O3 -Wall -march=i686
 
-test_comparative/test_comparative.exe: test_comparative/main.cpp other_parsers/tinyxml/tinystr.cpp other_parsers/tinyxml/tinyxml.cpp other_parsers/tinyxml/tinyxmlerror.cpp other_parsers/tinyxml/tinyxmlparser.cpp
-	$(CC) $(CFLAGS) -o $@ $^
+# build msvc debug mode
+build-msvc-debug: CONFIG=msvc-debug
+build-msvc-debug: CC=cl
+build-msvc-debug: COPTIONS=-EHsc -Zi
 
-test_interface/test_interface.exe: test_interface/main.cpp
-	$(CC) $(CFLAGS) -o $@ $^
+# build msvc release mode
+build-msvc-release: CONFIG=msvc-release
+build-msvc-release: CC=cl
+build-msvc-release: COPTIONS=-EHsc -O2
 
-test_multimodule/test_multimodule.exe: test_multimodule/main1.cpp test_multimodule/main2.cpp
-	$(CC) $(CFLAGS) -o $@ $^
+# run g++ debug mode
+run-g++-debug: CONFIG=g++-debug
 
-test_invalid/test_invalid.exe: test_invalid/main.cpp
-	$(CC) $(CFLAGS) -o $@ $^
+# run g++ release mode
+run-g++-release: CONFIG=g++-release
 
-test_no_exceptions/test_no_exceptions.exe: test_no_exceptions/main.cpp
-	$(CC) $(CFLAGS) -o $@ $^
+# run msvc debug mode
+run-msvc-debug: CONFIG=msvc-debug
 
-test_nodes/test_nodes.exe: test_nodes/main.cpp
-	$(CC) $(CFLAGS) -o $@ $^
+# run msvc release mode
+run-msvc-release: CONFIG=msvc-release
 
-test_size/test_size.exe: test_size/main.cpp
-	$(CC) $(CFLAGS) -o $@ $^
+# clean g++ debug mode
+clean-g++-debug: CONFIG=g++-debug
 
-test_wchar/test_wchar.exe: test_wchar/main.cpp
-	$(CC) $(CFLAGS) -o $@ $^
+# clean g++ release mode
+clean-g++-release: CONFIG=g++-release
+
+# clean msvc debug mode
+clean-msvc-debug: CONFIG=msvc-debug
+
+# clean msvc release mode
+clean-msvc-release: CONFIG=msvc-release
+
+# clean all
+clean: clean-g++-debug clean-g++-release clean-msvc-debug clean-msvc-release
+
+export CONFIG
+export CC
+export COPTIONS
+
+define BUILD_COMMANDS
+	mkdir -p $(CONFIG)
+	@let "failed = 0"; \
+	let "total = 0"; \
+	for project in $(PROJECTS); do \
+		$(MAKE) build -C $$project --no-print-directory; \
+		if [ $$? -ne 0 ]; then \
+			let "failed = failed + 1"; \
+			echo $$project failed!; \
+		fi; \
+		let "total = total + 1"; \
+	done; \
+	let "succeeded = $$[$$total-$$failed]"; \
+	echo; \
+	echo "*************************************************"; \
+	echo BUILD RESULTS: $$succeeded of $$total builds succeeded.; \
+	echo See build-log.txt files for details.; \
+	echo "*************************************************"; \
+	echo;
+endef
+	
+define RUN_COMMANDS
+	@let "failed = 0"; \
+	let "total = 0"; \
+	for project in $(PROJECTS); do \
+		$(MAKE) run -C $$project --no-print-directory; \
+		if [ $$? -ne 0 ]; then \
+			let "failed = failed + 1"; \
+			echo $$project failed!; \
+		fi; \
+		let "total = total + 1"; \
+	done; \
+	let "succeeded = $$[$$total-$$failed]"; \
+	echo; \
+	echo "*************************************************"; \
+	echo RUN RESULTS: $$succeeded of $$total tests succeeded. ; \
+	echo See run-log.txt files for details.; \
+	echo "*************************************************"; \
+	echo;
+endef
+
+define CLEAN_COMMANDS
+	@for project in $(PROJECTS); do \
+		$(MAKE) clean -C $$project --no-print-directory; \
+	done;
+endef
+
+build-g++-debug:
+	$(BUILD_COMMANDS)
+build-g++-release:
+	$(BUILD_COMMANDS)
+build-msvc-debug:
+	$(BUILD_COMMANDS)
+build-msvc-release:
+	$(BUILD_COMMANDS)
+run-g++-debug: build-g++-debug
+	$(RUN_COMMANDS)
+run-g++-release: build-g++-release
+	$(RUN_COMMANDS)
+run-msvc-debug: build-msvc-debug
+	$(RUN_COMMANDS)
+run-msvc-release: build-msvc-release
+	$(RUN_COMMANDS)
+clean-g++-debug:
+	$(CLEAN_COMMANDS)
+clean-g++-release:
+	$(CLEAN_COMMANDS)
+clean-msvc-debug:
+	$(CLEAN_COMMANDS)
+clean-msvc-release:
+	$(CLEAN_COMMANDS)

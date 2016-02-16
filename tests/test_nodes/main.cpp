@@ -95,13 +95,13 @@ void test_attribute_node()
     CHECK(attr->name_size() == 4);
     if (Flags & parse_normalize_whitespace)
     {
-        CHECK(value<Flags>(attr) == " \nfoo  bar\t");  // Whitespace is not normalized in attribute values
-        CHECK(attr->value_size() == 11);
+        CHECK(value<Flags>(attr) == " \r\nfoo  bar\t");  // Whitespace is not normalized in attribute values
+        CHECK(attr->value_size() == 12);
     }
     else
     {
-        CHECK(value<Flags>(attr) == " \nfoo  bar\t");
-        CHECK(attr->value_size() == 11);
+        CHECK(value<Flags>(attr) == " \r\nfoo  bar\t");
+        CHECK(attr->value_size() == 12);
     }
 }
 
@@ -269,7 +269,7 @@ void test_doctype_node()
         REQUIRE(doctype);
         CHECK(doctype->type() == node_doctype);
         CHECK(*doctype->name() == 0);
-        CHECK(value<Flags>(doctype) == "el1 [\n\t<!ELEMENT el1 EMPTY>\n]");
+        CHECK(value<Flags>(doctype) == "el1 [\r\n\t<!ELEMENT el1 EMPTY>\r\n]");
     }
 
 }

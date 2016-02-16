@@ -55,7 +55,7 @@ void test_progressive_truncations()
 template<int Flags>
 void test_random_mutations()
 {
-    const int num_mutations = 100000;
+    const int num_mutations = 10000;
     const int max_garbage_chars_per_mutation = 100;
 
     // Initialize random generator

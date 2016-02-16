@@ -13,28 +13,30 @@
 //!
 //! <a href="http://rapidxml.sourceforge.net">RapidXml</a> is an attempt to create the fastest XML DOM parser possible, while retaining useability, 
 //! portability and reasonable W3C compatibility. 
-//! It is an in-situ parser written in C++, with parsing speed approaching that of <code>strlen()</code> function executed on the same data.
+//! It is an in-situ parser written in C++, with parsing speed approaching that of <c>strlen()</c> function executed on the same data.
 //! <br><br>
 //! Entire parser is contained in a single header file, so no building or linking is neccesary. 
-//! To use it you just need to copy <code>%rapidxml.hpp</code> file to a convenient place (such as your project directory), and include it where needed.
-//! You may also want to use utilities contained in headers <code>%rapidxml_print.hpp</code> and 
-//! <code>%rapidxml_utils.hpp</code>, although these are not documented.
+//! To use it you just need to copy <c>%rapidxml.hpp</c> file to a convenient place (such as your project directory), and include it where needed.
+//! You may also want to use printing functions contained in header <c>%rapidxml_print.hpp</c>.
 //!
 //! \subsection dependencies_and_compatibility Dependencies And Compatibility
 //!
 //! RapidXml has <i>no dependencies</i> other than a very small subset of standard C++ library 
-//! (namely <code>&lt;cassert></code>, <code>&lt;cstdlib></code>, <code>&lt;new&gt;</code> 
-//! and <code>&lt;exception></code>, unless exceptions are disabled).
-//! It should compile on any reasonably conformant compiler, and was tested on Visual C++ 2003, Visual C++ 2005, gcc 3, gcc 4, and Comeau 4.3.3.
+//! (<c>&lt;cassert&gt;</c>, <c>&lt;cstdlib&gt;</c>, <c>&lt;new&gt;</c> 
+//! and <c>&lt;exception&gt;</c>, unless exceptions are disabled).
+//! It should compile on any reasonably conformant compiler, and was tested on Visual C++ 2003, Visual C++ 2005, Visual C++ 2008, gcc 3, gcc 4, and Comeau 4.3.3.
 //! Care was taken that no warnings are produced on these compilers, even with highest warning levels enabled.
 //!
 //! \subsection character_types_and_encodings Character Types And Encodings
 //!
 //! RapidXml is character type agnostic, and can work both with narrow and wide characters. 
-//! Current version only fully supports UTF-8, so use of wide characters is somewhat incapacitated.
-//! However, it should succesfully parse <code>wchar_t</code> strings containing UTF-16 or UTF-32 (depending on the <code>wchar_t</code> size),
-//! provided that endianness of the data matches that of the machine. 
-//! This is often the case if data was loaded by use of standard library streams working in text mode.
+//! Current version does not fully support UTF-16 or UTF-32, so use of wide characters is somewhat incapacitated.
+//! However, it should succesfully parse <c>wchar_t</c> strings containing UTF-16 or UTF-32 if endianness of the data matches that of the machine.
+//! UTF-8 is fully supported, including all numeric character references, which are expanded into appropriate UTF-8 byte sequences (unless you enable parse_no_utf8 flag).
+//! <br><br>
+//! Note that RapidXml performs no decoding - strings returned by name() and value() functions will contain text encoded using the same encoding as source file.
+//! Rapidxml understands and expands the following character references:  <c>&amp;apos; &amp;amp; &amp;quot; &amp;lt; &amp;gt; &amp;#...;</c>
+//! Other character references are not expanded.
 //!
 //! \subsection error_handling Error Handling
 //!
@@ -44,7 +46,7 @@
 //!
 //! \subsection memory_allocation Memory Allocation
 //!
-//! RapidXml uses a special memory pool object to allocate nodes and attributes, because direct allocation using <code>new</code> operator would be far too slow.
+//! RapidXml uses a special memory pool object to allocate nodes and attributes, because direct allocation using <c>new</c> operator would be far too slow.
 //! Underlying memory allocations performed by the pool can be customized by use of memory_pool::set_allocator() function. 
 //! See class memory_pool for more information.
 //!
@@ -59,7 +61,7 @@
 //! \subsection api_design API Design
 //!
 //! RapidXml API is minimalistic, to reduce code size as much as possible, and facilitate use in embedded environments.
-//! Additional convenience functions are provided in separate headers: <code>rapidxml_utils.hpp</code> and <code>rapidxml_print.hpp</code>.
+//! Additional convenience functions are provided in separate headers: <c>rapidxml_utils.hpp</c> and <c>rapidxml_print.hpp</c>.
 //! Contents of these headers is not an essential part of the library, and is currently not documented (otherwise than with comments in code).
 //!
 //! \subsection reliability Reliability
@@ -87,16 +89,16 @@
 //!
 //! \section two_minute_tutorial Two Minute Tutorial
 //!
-//! \subsection paring Parsing
+//! \subsection parsing Parsing
 //!
-//! The following code causes RapidXml to parse a zero-terminated string named <code>text</code>:
-//! <pre>
-//! using namespace rapidxml;
-//! xml_document<> doc;    // character type defaults to char
-//! doc.parse<0>(text);    // 0 means default parse flags
-//! </pre>
-//! <code>doc</code> object is now a root of DOM tree containing representation of the parsed XML.
-//! Because all RapidXml interface is contained inside namespace <code>rapidxml</code>, 
+//! The following code causes RapidXml to parse a zero-terminated string named <c>text</c>:
+//! \verbatim
+using namespace rapidxml;
+xml_document<> doc;    // character type defaults to char
+doc.parse<0>(text);    // 0 means default parse flags
+\endverbatim
+//! <c>doc</c> object is now a root of DOM tree containing representation of the parsed XML.
+//! Because all RapidXml interface is contained inside namespace <c>rapidxml</c>, 
 //! users must either bring contents of this namespace into scope, or fully qualify all the names.
 //! Class xml_document represents a root of the DOM hierarchy. 
 //! By means of public inheritance, it is also an xml_node and a memory_pool.
@@ -107,29 +109,29 @@
 //! \subsection accessing_dom_tree Accessing The DOM Tree
 //!
 //! To access the DOM tree, use methods of xml_node and xml_attribute classes:
-//! <pre>
-//! cout << "Name of my first node is: " << doc.first_node()->name() << "\n";
-//! xml_node<> *node = doc.first_node("foobar");
-//! cout << "Node foobar has value " << node->value() << "\n";
-//! for (xml_attribute<> *attr = node->first_attribute();
-//!      attr; attr = attr->next_attribute())
-//! {
-//!     cout << "Node foobar has attribute " << attr->name() << " ";
-//!     cout << "with value " << attr->value() << "\n";
-//! }
-//! </pre>
+//! \verbatim
+cout << "Name of my first node is: " << doc.first_node()->name() << "\n";
+xml_node<> *node = doc.first_node("foobar");
+cout << "Node foobar has value " << node->value() << "\n";
+for (xml_attribute<> *attr = node->first_attribute();
+     attr; attr = attr->next_attribute())
+{
+    cout << "Node foobar has attribute " << attr->name() << " ";
+    cout << "with value " << attr->value() << "\n";
+}
+\endverbatim
 //!
 //! \subsection modifying_dom_tree Modifying The DOM Tree
 //!
 //! DOM tree produced by the parser is fully modifiable. Nodes and attributes can be added/removed,
 //! and their contents changed. The below example creates a HTML document, whose sole contents is a link to google.com website:
-//! <pre>
-//! xml_document<> doc;
-//! xml_node<> *node = doc.allocate_node(node_element, "a", "Google");
-//! doc.append_node(node);
-//! xml_attribute<> *attr = doc.allocate_attribute("href", "google.com");
-//! node->append_attribute(attr);
-//! </pre>
+//! \verbatim
+xml_document<> doc;
+xml_node<> *node = doc.allocate_node(node_element, "a", "Google");
+doc.append_node(node);
+xml_attribute<> *attr = doc.allocate_attribute("href", "google.com");
+node->append_attribute(attr);
+\endverbatim
 //! One quirk is that nodes and attributes <i>do not own</i> the text of their names and values.
 //! This is because normally they only store pointers to the source text. 
 //! So, when assigning a new name or value to the node, care must be taken to ensure proper lifetime of the string.
@@ -137,13 +139,36 @@
 //! In the above example this is not necessary, because we are only assigning character constants.
 //! But the code below uses memory_pool::allocate_string() function to allocate node name
 //! (which will have the same lifetime as the document), and assigns it to a new node:
-//! <pre>
-//! xml_document<> doc;
-//! char *node_name = doc.allocate_string(name);        // Allocate string and copy name into it
-//! xml_node<> *node = doc.allocate_node(node_element, node_name);  // Set node name to node_name
-//! </pre>
+//! \verbatim
+xml_document<> doc;
+char *node_name = doc.allocate_string(name);        // Allocate string and copy name into it
+xml_node<> *node = doc.allocate_node(node_element, node_name);  // Set node name to node_name
+\endverbatim
 //! Check \ref reference section for description of the entire interface.
 //!
+//! \subsection printing Printing XML
+//!
+//! You can print <c>xml_document</c> and <c>xml_node</c> objects into an XML string. Use print() function or operator <<, which are defined in <c>rapidxml_print.hpp</c> header.
+//! \verbatim
+using namespace rapidxml;
+xml_document<> doc;    // character type defaults to char
+// ... some code to fill the document
+
+// Print to stream using operator <<
+std::cout << doc;   
+
+// Print to stream using print function, specifying printing flags
+print(std::cout, doc, 0);   // 0 means default printing flags
+
+// Print to string using output iterator
+std::string s;
+print(std::back_inserter(s), doc, 0);
+
+// Print to memory buffer using output iterator
+char buffer[4096];                      // You are responsible for making the buffer large enough!
+char *end = print(buffer, doc, 0);      // end contains pointer to character after last printed character
+*end = 0;                               // Add string terminator after XML
+\endverbatim
 //! \section differences Differences From Regular XML Parsers
 //!
 //! RapidXml is an <i>in-situ parser</i>, which allows it to achieve very high parsing speed.
@@ -202,7 +227,7 @@
 //!
 //! \subsection performance_charts Comparison With Other Parsers
 //!
-//! The table below compares speed of RapidXml to some other parsers, and to <code>strlen()</code> function executed on the same data.
+//! The table below compares speed of RapidXml to some other parsers, and to <c>strlen()</c> function executed on the same data.
 //! On a modern CPU (as of 2007), you can expect parsing throughput to be close to 1 GB/s.
 //! As a rule of thumb, parsing speed is about 50-100x faster than Xerces DOM, 
 //! 30-60x faster than TinyXml, 3-12x faster than pugxml, and about 5% - 30% faster than pugixml,

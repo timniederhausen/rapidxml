@@ -1,7 +1,9 @@
 #ifndef RAPIDXML_ITERATORS_HPP_INCLUDED
 #define RAPIDXML_ITERATORS_HPP_INCLUDED
 
-// Revision $DateTime:$
+// Copyright (C) 2006, 2008 Marcin Kalicinski
+// Version 1.12
+// Revision $DateTime: 2008/11/06 21:50:30 $
 //! \file rapidxml_iterators.hpp This file contains rapidxml iterators
 
 #include "rapidxml.hpp"

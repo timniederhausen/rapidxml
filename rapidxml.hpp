@@ -2,8 +2,8 @@
 #define RAPIDXML_HPP_INCLUDED
 
 // Copyright (C) 2006, 2008 Marcin Kalicinski
-// Version 1.11
-// Revision $DateTime: 2008/05/04 14:39:39 $
+// Version 1.12
+// Revision $DateTime: 2008/11/02 13:22:12 $
 //! \file rapidxml.hpp This file contains rapidxml parser and DOM implementation
 
 // If standard library is disabled, user must provide implementations of required functions and typedefs
@@ -149,68 +149,94 @@ namespace rapidxml
     // Parsing flags
 
     //! Parse flag instructing the parser to not create data nodes. 
-    //! Text of first data node will still be placed in value of parent element, 
-    //! unless parse_no_element_values flag is also specified.
+    //! Text of first data node will still be placed in value of parent element, unless rapidxml::parse_no_element_values flag is also specified.
     //! Can be combined with other flags by use of | operator.
+    //! <br><br>
+    //! See xml_document::parse() function.
     const int parse_no_data_nodes = 0x1;            
 
     //! Parse flag instructing the parser to not use text of first data node as a value of parent element.
     //! Can be combined with other flags by use of | operator.
+    //! Note that child data nodes of element node take precendence over its value when printing. 
+    //! That is, if element has one or more child data nodes <em>and</em> a value, the value will be ignored.
+    //! Use rapidxml::parse_no_data_nodes flag to prevent creation of data nodes if you want to manipulate data using values of elements.
+    //! <br><br>
+    //! See xml_document::parse() function.
     const int parse_no_element_values = 0x2;
     
     //! Parse flag instructing the parser to not place zero terminators after strings in the source text.
     //! By default zero terminators are placed, modifying source text.
     //! Can be combined with other flags by use of | operator.
+    //! <br><br>
+    //! See xml_document::parse() function.
     const int parse_no_string_terminators = 0x4;
     
     //! Parse flag instructing the parser to not translate entities in the source text.
     //! By default entities are translated, modifying source text.
     //! Can be combined with other flags by use of | operator.
+    //! <br><br>
+    //! See xml_document::parse() function.
     const int parse_no_entity_translation = 0x8;
     
     //! Parse flag instructing the parser to disable UTF-8 handling and assume plain 8 bit characters.
     //! By default, UTF-8 handling is enabled.
     //! Can be combined with other flags by use of | operator.
+    //! <br><br>
+    //! See xml_document::parse() function.
     const int parse_no_utf8 = 0x10;
     
     //! Parse flag instructing the parser to create XML declaration node.
     //! By default, declaration node is not created.
     //! Can be combined with other flags by use of | operator.
+    //! <br><br>
+    //! See xml_document::parse() function.
     const int parse_declaration_node = 0x20;
     
     //! Parse flag instructing the parser to create comments nodes.
     //! By default, comment nodes are not created.
     //! Can be combined with other flags by use of | operator.
+    //! <br><br>
+    //! See xml_document::parse() function.
     const int parse_comment_nodes = 0x40;
     
     //! Parse flag instructing the parser to create DOCTYPE node.
     //! By default, doctype node is not created.
     //! Although W3C specification allows at most one DOCTYPE node, RapidXml will silently accept documents with more than one.
     //! Can be combined with other flags by use of | operator.
+    //! <br><br>
+    //! See xml_document::parse() function.
     const int parse_doctype_node = 0x80;
     
     //! Parse flag instructing the parser to create PI nodes.
     //! By default, PI nodes are not created.
     //! Can be combined with other flags by use of | operator.
+    //! <br><br>
+    //! See xml_document::parse() function.
     const int parse_pi_nodes = 0x100;
     
     //! Parse flag instructing the parser to validate closing tag names. 
     //! If not set, name inside closing tag is irrelevant to the parser.
     //! By default, closing tags are not validated.
     //! Can be combined with other flags by use of | operator.
+    //! <br><br>
+    //! See xml_document::parse() function.
     const int parse_validate_closing_tags = 0x200;
     
     //! Parse flag instructing the parser to trim all leading and trailing whitespace of data nodes.
     //! By default, whitespace is not trimmed. 
     //! This flag does not cause the parser to modify source text.
     //! Can be combined with other flags by use of | operator.
+    //! <br><br>
+    //! See xml_document::parse() function.
     const int parse_trim_whitespace = 0x400;
 
     //! Parse flag instructing the parser to condense all whitespace runs of data nodes to a single space character.
-    //! Trimming of leading and trailing whitespace of data is controlled by parse_trim_whitespace flag.
+    //! Trimming of leading and trailing whitespace of data is controlled by rapidxml::parse_trim_whitespace flag.
     //! By default, whitespace is not normalized. 
     //! If this flag is specified, source text will be modified.
     //! Can be combined with other flags by use of | operator.
+    //! <br><br>
+    //! See xml_document::parse() function.
     const int parse_normalize_whitespace = 0x800;
 
     // Compound flags
@@ -219,8 +245,10 @@ namespace rapidxml
     //! This is always equal to 0, so that all other flags can be simply ored together.
     //! Normally there is no need to inconveniently disable flags by anding with their negated (~) values.
     //! This also means that meaning of each flag is a <i>negation</i> of the default setting. 
-    //! For example, if flag name is <code>parse_no_utf8</code>, it means that utf-8 is <i>enabled</i> by default,
+    //! For example, if flag name is rapidxml::parse_no_utf8, it means that utf-8 is <i>enabled</i> by default,
     //! and using the flag will disable it.
+    //! <br><br>
+    //! See xml_document::parse() function.
     const int parse_default = 0;
     
     //! A combination of parse flags that forbids any modifications of the source text. 
@@ -230,13 +258,18 @@ namespace rapidxml
     //! <li>entities will not be translated</li>
     //! <li>whitespace will not be normalized</li>
     //! </ul>
+    //! See xml_document::parse() function.
     const int parse_non_destructive = parse_no_string_terminators | parse_no_entity_translation;
     
     //! A combination of parse flags resulting in fastest possible parsing, without sacrificing important data.
+    //! <br><br>
+    //! See xml_document::parse() function.
     const int parse_fastest = parse_non_destructive | parse_no_data_nodes;
     
     //! A combination of parse flags resulting in largest amount of data being extracted. 
     //! This usually results in slowest parsing.
+    //! <br><br>
+    //! See xml_document::parse() function.
     const int parse_full = parse_declaration_node | parse_comment_nodes | parse_doctype_node | parse_pi_nodes | parse_validate_closing_tags;
 
     ///////////////////////////////////////////////////////////////////////
@@ -364,7 +397,7 @@ namespace rapidxml
         //! Allocates a new node from the pool, and optionally assigns name and value to it. 
         //! If the allocation request cannot be accomodated, this function will throw <code>std::bad_alloc</code>.
         //! If exceptions are disabled by defining RAPIDXML_NO_EXCEPTIONS, this function
-        //! will call parse_error_handler() function.
+        //! will call rapidxml::parse_error_handler() function.
         //! \param type Type of node to create.
         //! \param name Name to assign to the node, or 0 to assign no name.
         //! \param value Value to assign to the node, or 0 to assign no value.
@@ -397,7 +430,7 @@ namespace rapidxml
         //! Allocates a new attribute from the pool, and optionally assigns name and value to it.
         //! If the allocation request cannot be accomodated, this function will throw <code>std::bad_alloc</code>.
         //! If exceptions are disabled by defining RAPIDXML_NO_EXCEPTIONS, this function
-        //! will call parse_error_handler() function.
+        //! will call rapidxml::parse_error_handler() function.
         //! \param name Name to assign to the attribute, or 0 to assign no name.
         //! \param value Value to assign to the attribute, or 0 to assign no value.
         //! \param name_size Size of name to assign, or 0 to automatically calculate size from name string.
@@ -428,7 +461,7 @@ namespace rapidxml
         //! Allocates a char array of given size from the pool, and optionally copies a given string to it.
         //! If the allocation request cannot be accomodated, this function will throw <code>std::bad_alloc</code>.
         //! If exceptions are disabled by defining RAPIDXML_NO_EXCEPTIONS, this function
-        //! will call parse_error_handler() function.
+        //! will call rapidxml::parse_error_handler() function.
         //! \param source String to initialize the allocated memory with, or 0 to not initialize it.
         //! \param size Number of characters to allocate, or zero to calculate it automatically from source string length; if size is 0, source string must be specified and null terminated.
         //! \return Pointer to allocated char array. This pointer will never be NULL.
@@ -595,7 +628,7 @@ namespace rapidxml
     
         //! Gets name of the node. 
         //! Interpretation of name depends on type of node.
-        //! Note that name will not be zero-terminated if parse_no_string_terminators option was selected during parse.
+        //! Note that name will not be zero-terminated if rapidxml::parse_no_string_terminators option was selected during parse.
         //! <br><br>
         //! Use name_size() function to determine length of the name.
         //! \return Name of node, or empty string if node has no name.
@@ -614,7 +647,7 @@ namespace rapidxml
 
         //! Gets value of node. 
         //! Interpretation of value depends on type of node.
-        //! Note that value will not be zero-terminated if parse_no_string_terminators option was selected during parse.
+        //! Note that value will not be zero-terminated if rapidxml::parse_no_string_terminators option was selected during parse.
         //! <br><br>
         //! Use value_size() function to determine length of the value.
         //! \return Value of node, or empty string if node has no value.
@@ -672,6 +705,9 @@ namespace rapidxml
         //! <br><br>
         //! Size of value must be specified separately, because it does not have to be zero terminated.
         //! Use value(const Ch *) function to have the length automatically calculated (string must be zero terminated).
+        //! <br><br>
+        //! If an element has a child node of type node_data, it will take precedence over element value when printing.
+        //! If you want to manipulate data of elements using values, use parser flag rapidxml::parse_no_data_nodes to prevent creation of data nodes by the parser.
         //! \param value value of node to set. Does not have to be zero terminated.
         //! \param size Size of value, in characters. This does not include zero terminator, if one is present.
         void value(const Ch *value, std::size_t size)
@@ -1293,9 +1329,9 @@ namespace rapidxml
         }
 
         //! Parses zero-terminated XML string according to given flags.
-        //! Passed string will be modified by the parser, unless parse_non_destructive flag is used.
+        //! Passed string will be modified by the parser, unless rapidxml::parse_non_destructive flag is used.
         //! The string must persist for the lifetime of the document.
-        //! In case of error, parse_error exception will be thrown.
+        //! In case of error, rapidxml::parse_error exception will be thrown.
         //! <br><br>
         //! If you want to parse contents of a file, you must first load the file into the memory, and pass pointer to its beginning.
         //! Make sure that data is zero-terminated.

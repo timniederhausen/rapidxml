@@ -10,6 +10,7 @@ xml_files/simple_comments.xml
 xml_files/simple_header.xml
 xml_files/simple_nested.xml
 xml_files/simple_element.xml
+xml_files/large_data_test.xml
 
 ; Real files
 xml_files/hamlet.xml

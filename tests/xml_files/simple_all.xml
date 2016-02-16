@@ -13,7 +13,7 @@
 -->
 <root entities="&lt;&gt;&amp;&quot;&apos;&#32;&#29123;&#x20;&#xa41fD;">
 	&lt;&gt;&amp;&quot;&apos;&#32;&#29123;&#x20;&#xa41fD;
-	<attributes att1="'value1'" att2='"value2"'>data</root>
+	<attributes att1="'value1'" att2='"value2"'>data</attributes>
 	<cdata>
 		<![CDATA[data<fake>&amp;&#20;</fake>]]>
 	</cdata>

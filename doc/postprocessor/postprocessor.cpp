@@ -101,7 +101,7 @@ void process_contextless(xml_node<char> *node)
     {
         node->name("code");
     }
-    else if (string(node->name()) == "preformatted")
+    else if (string(node->name()) == "verbatim")
     {
         node->name("pre");
     }

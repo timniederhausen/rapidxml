@@ -1,7 +1,9 @@
 #ifndef RAPIDXML_UTILS_HPP_INCLUDED
 #define RAPIDXML_UTILS_HPP_INCLUDED
 
-// Revision $DateTime: 2007/08/08 00:56:15 $
+// Copyright (C) 2006, 2008 Marcin Kalicinski
+// Version 1.12
+// Revision $DateTime: 2008/11/01 17:40:11 $
 //! \file rapidxml_utils.hpp This file contains high-level rapidxml utilities that can be useful
 //! in certain simple scenarios. They should probably not be used if maximizing performance is the main objective.
 
@@ -28,7 +30,7 @@ namespace rapidxml
             using namespace std;
 
             // Open stream
-            basic_ifstream<Ch> stream(filename);
+            basic_ifstream<Ch> stream(filename, ios::binary);
             if (!stream)
                 throw runtime_error(string("cannot open file ") + filename);
             stream.unsetf(ios::skipws);

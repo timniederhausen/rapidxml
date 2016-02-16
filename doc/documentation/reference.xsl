@@ -119,7 +119,7 @@
 					</span> Manual
 				</h1>
 
-				<h3>Version 1.1</h3>
+				<h3>Version 1.12</h3>
 
 				<!-- rapidxml namespace -->
 
@@ -222,7 +222,7 @@
 
 								<xsl:if test="basecompoundref">
 									<br></br>
-									Inherited from
+									Inherits from
 									<xsl:for-each select="basecompoundref">
 										<a href="#{@refid}">
 											<xsl:value-of select="substring-after(document(concat(@refid, '.xml'))/doxygen/compounddef/compoundname, '::')"></xsl:value-of>
@@ -232,7 +232,7 @@
 								</xsl:if>
 								<br></br>
 								<xsl:if test="derivedcompoundref">
-									Inherited by
+									Base class for
 									<xsl:for-each select="derivedcompoundref">
 										<a href="#{@refid}">
 											<xsl:value-of select="substring-after(document(concat(@refid, '.xml'))/doxygen/compounddef/compoundname, '::')"></xsl:value-of>
@@ -285,7 +285,7 @@
 										</xsl:call-template>
 										<xsl:text> </xsl:text>
 										<xsl:if test="substring-after($compoundName, '::')!=''"><xsl:value-of select="substring-after($compoundName, '::')"/>::</xsl:if><xsl:value-of select="name"/>
-									</h3>
+                  </h3>
 
 									<!-- Member synopsis -->
 
@@ -298,7 +298,7 @@
 										</code>
 									</xsl:if>
 
-									<!-- Member description -->
+                  <!-- Member description -->
 
 									<xsl:if test="briefdescription/para/text()!='' or detaileddescription/para/text()!=''">
 										<h4>Description</h4>

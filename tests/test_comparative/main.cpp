@@ -3,7 +3,6 @@
 #include "../../rapidxml.hpp"
 #include "../../rapidxml_print.hpp"
 #include "../other_parsers/tinyxml/tinyxml.h"
-#include <boost/shared_ptr.hpp>
 #include <vector>
 #include <string>
 #include <fstream>
@@ -11,9 +10,9 @@
 #include <iterator>
 #include <cstring>
 #include <stdexcept>
+#include <memory>
 
 using namespace rapidxml;
-using namespace boost;
 using namespace std;
 
 template<int Flags> 
@@ -130,10 +129,10 @@ struct two_xmls
 };
 
 template<int Flags>
-shared_ptr<two_xmls> create_two_xmls(const string &filename, bool tinyxml_fails)
+two_xmls *create_two_xmls(const string &filename, bool tinyxml_fails)
 {
 
-    shared_ptr<two_xmls> result(new two_xmls);
+    two_xmls *result = new two_xmls;
     result->tinyxml_fails = tinyxml_fails;
     
     // Create TinyXML version
@@ -260,7 +259,7 @@ bool compare_nodes(xml_node<char> *n1, xml_node<char> *n2, string &desc)
 template<int Flags>
 void test_xml_file(const string &filename, bool tinyxml_fails)
 {
-    shared_ptr<two_xmls> tx = create_two_xmls<Flags>(filename, tinyxml_fails);
+    auto_ptr<two_xmls> tx(create_two_xmls<Flags>(filename, tinyxml_fails));
     string desc;
     if (!tx->tinyxml_fails && !compare_nodes(&tx->doc1, &tx->doc2, desc))
     {
@@ -282,7 +281,7 @@ int main()
     try
     {
         // Load file list
-        ifstream stream("filelist.txt");
+        ifstream stream("filelist.txt", ios::binary);
         if (!stream)
             throw runtime_error("filelist.txt not found");
         vector<string> files;

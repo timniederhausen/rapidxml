@@ -22,6 +22,7 @@ xml_files/simple_header.xml
 xml_files/simple_nested.xml
 xml_files/simple_element.xml
 xml_files/simple_all.xml
+xml_files/large_data_test.xml
 xml_files/xmlts/eduni/errata-2e/E14.xml
 xml_files/xmlts/eduni/errata-2e/E15a.xml
 xml_files/xmlts/eduni/errata-2e/E15b.xml

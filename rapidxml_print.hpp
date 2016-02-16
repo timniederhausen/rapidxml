@@ -1,12 +1,18 @@
 #ifndef RAPIDXML_PRINT_HPP_INCLUDED
 #define RAPIDXML_PRINT_HPP_INCLUDED
 
-// Revision $DateTime: 2007/08/08 00:56:15 $
+// Copyright (C) 2006, 2008 Marcin Kalicinski
+// Version 1.12
+// Revision $DateTime: 2008/11/06 21:37:14 $
 //! \file rapidxml_print.hpp This file contains rapidxml printer implementation
 
 #include "rapidxml.hpp"
-#include <ostream>
-#include <iterator>
+
+// Only include streams if not disabled
+#ifndef RAPIDXML_NO_STREAMS
+    #include <ostream>
+    #include <iterator>
+#endif
 
 namespace rapidxml
 {
@@ -14,7 +20,7 @@ namespace rapidxml
     ///////////////////////////////////////////////////////////////////////
     // Printing flags
 
-    const int print_no_indenting = 0x1;   //!< Printer flag instructing the printer to suppress indenting of XML
+    const int print_no_indenting = 0x1;   //!< Printer flag instructing the printer to suppress indenting of XML. See print() function.
 
     ///////////////////////////////////////////////////////////////////////
     // Internal
@@ -83,7 +89,7 @@ namespace rapidxml
             return out;
         }
 
-        // Fill given output iterator with repetitions of the same character
+        // Find character
         template<class Ch, Ch ch>
         inline bool find_char(const Ch *begin, const Ch *end)
         {
@@ -244,18 +250,7 @@ namespace rapidxml
             out = copy_chars(node->name(), node->name() + node->name_size(), out);
             out = print_attributes(out, node, flags);
             
-            // Test if node contains a single data node
-            bool has_single_data_node = false;
-            if (node->first_node())
-            {
-                for (xml_node<Ch> *child = node->first_node(); child; child = child->next_sibling())
-                    if (child->type() == node_data)
-                    {
-                        has_single_data_node = (child->next_sibling() == 0);
-                        break;
-                    }
-            }
-
+            // If node is childless
             if (node->value_size() == 0 && !node->first_node())
             {
                 // Print childless node tag ending
@@ -272,12 +267,12 @@ namespace rapidxml
                 if (!child)
                 {
                     // If node has no children, only print its value without indenting
-                    copy_chars(node->value(), node->value() + node->value_size(), out);
+                    out = copy_and_expand_chars(node->value(), node->value() + node->value_size(), Ch(0), out);
                 }
                 else if (child->next_sibling() == 0 && child->type() == node_data)
                 {
                     // If node has a sole data child, only print its value without indenting
-                    copy_chars(child->value(), child->value() + child->value_size(), out);
+                    out = copy_and_expand_chars(child->value(), child->value() + child->value_size(), Ch(0), out);
                 }
                 else
                 {
@@ -379,14 +374,14 @@ namespace rapidxml
         }
 
     }
-    //! \condend
+    //! \endcond
 
     ///////////////////////////////////////////////////////////////////////////
     // Printing
 
     //! Prints XML to given output iterator.
     //! \param out Output iterator to print to.
-    //! \param node Node to be printed.
+    //! \param node Node to be printed. Pass xml_document to print entire document.
     //! \param flags Flags controlling how XML is printed.
     //! \return Output iterator pointing to position immediately after last character of printed text.
     template<class OutIt, class Ch> 
@@ -395,9 +390,11 @@ namespace rapidxml
         return internal::print_node(out, &node, flags, 0);
     }
 
+#ifndef RAPIDXML_NO_STREAMS
+
     //! Prints XML to given output stream.
     //! \param out Output stream to print to.
-    //! \param node Node to be printed.
+    //! \param node Node to be printed. Pass xml_document to print entire document.
     //! \param flags Flags controlling how XML is printed.
     //! \return Output stream.
     template<class Ch> 
@@ -407,7 +404,7 @@ namespace rapidxml
         return out;
     }
 
-    //! Prints formatted XML to given output stream.
+    //! Prints formatted XML to given output stream. Uses default printing flags. Use print() function to customize printing process.
     //! \param out Output stream to print to.
     //! \param node Node to be printed.
     //! \return Output stream.
@@ -416,6 +413,8 @@ namespace rapidxml
     {
         return print(out, node);
     }
+
+#endif
 
 }
 

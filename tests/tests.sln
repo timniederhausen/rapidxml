@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual C++ Express 2008
+# Visual Studio 2008
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_comparative", "test_comparative\test_comparative.vcproj", "{C9168E1F-1AB4-4EB7-B42E-6C11FCCE8590}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_interface", "test_interface\test_interface.vcproj", "{B0B7CF2A-5FD7-42F9-8DAB-267804A3FBDC}"
@@ -23,7 +23,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_size", "test_size\test
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_wchar", "test_wchar\test_wchar.vcproj", "{1ABC3D2F-02AA-48E7-A61A-743D908AD60C}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_allocation", "test_allocation\test_allocation.vcproj", "{129D61B8-B35E-4230-9363-08F831825353}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_allocation_1", "test_allocation_1\test_allocation_1.vcproj", "{129D61B8-B35E-4230-9363-08F831825353}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_allocation_2", "test_allocation_2\test_allocation_2.vcproj", "{BCD9E16E-8654-40A6-A9AF-C37DD4F9B364}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -79,6 +81,10 @@ Global
 		{129D61B8-B35E-4230-9363-08F831825353}.Debug|Win32.Build.0 = Debug|Win32
 		{129D61B8-B35E-4230-9363-08F831825353}.Release|Win32.ActiveCfg = Release|Win32
 		{129D61B8-B35E-4230-9363-08F831825353}.Release|Win32.Build.0 = Release|Win32
+		{BCD9E16E-8654-40A6-A9AF-C37DD4F9B364}.Debug|Win32.ActiveCfg = Debug|Win32
+		{BCD9E16E-8654-40A6-A9AF-C37DD4F9B364}.Debug|Win32.Build.0 = Debug|Win32
+		{BCD9E16E-8654-40A6-A9AF-C37DD4F9B364}.Release|Win32.ActiveCfg = Release|Win32
+		{BCD9E16E-8654-40A6-A9AF-C37DD4F9B364}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
