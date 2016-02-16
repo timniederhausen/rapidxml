@@ -79,6 +79,7 @@ void test_clear()
 
     doc.clear();
     CHECK(doc.first_node() == 0);
+    doc.set_allocator(0, 0);
 }
 
 void test_clone_node()

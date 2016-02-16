@@ -3,6 +3,7 @@ SHELL=bash
 PROJECTS= \
 	test_allocation_1 \
 	test_allocation_2 \
+	test_alignment \
 	test_comparative \
 	test_interface \
 	test_invalid \

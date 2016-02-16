@@ -1,9 +1,9 @@
 #ifndef RAPIDXML_HPP_INCLUDED
 #define RAPIDXML_HPP_INCLUDED
 
-// Copyright (C) 2006, 2008 Marcin Kalicinski
-// Version 1.12
-// Revision $DateTime: 2008/11/02 13:22:12 $
+// Copyright (C) 2006, 2009 Marcin Kalicinski
+// Version 1.13
+// Revision $DateTime: 2009/05/13 01:46:17 $
 //! \file rapidxml.hpp This file contains rapidxml parser and DOM implementation
 
 // If standard library is disabled, user must provide implementations of required functions and typedefs
@@ -119,13 +119,20 @@ namespace rapidxml
 #ifndef RAPIDXML_DYNAMIC_POOL_SIZE
     // Size of dynamic memory block of memory_pool.
     // Define RAPIDXML_DYNAMIC_POOL_SIZE before including rapidxml.hpp if you want to override the default value.
-    // After the static block is exhausted, dynamic blocks with this size are allocated by memory_pool.
+    // After the static block is exhausted, dynamic blocks with approximately this size are allocated by memory_pool.
     #define RAPIDXML_DYNAMIC_POOL_SIZE (64 * 1024)
+#endif
+
+#ifndef RAPIDXML_ALIGNMENT
+    // Memory allocation alignment.
+    // Define RAPIDXML_ALIGNMENT before including rapidxml.hpp if you want to override the default value, which is the size of pointer.
+    // All memory allocations for nodes, attributes and strings will be aligned to this value.
+    // This must be a power of 2 and at least 1, otherwise memory_pool will not work.
+    #define RAPIDXML_ALIGNMENT sizeof(void *)
 #endif
 
 namespace rapidxml
 {
-
     // Forward declarations
     template<class Ch> class xml_node;
     template<class Ch> class xml_attribute;
@@ -358,10 +365,13 @@ namespace rapidxml
     //! This behaviour can be changed by setting custom allocation routines. 
     //! Use set_allocator() function to set them.
     //! <br><br>
+    //! Allocations for nodes, attributes and strings are aligned at <code>RAPIDXML_ALIGNMENT</code> bytes.
+    //! This value defaults to the size of pointer on target architecture.
+    //! <br><br>
     //! To obtain absolutely top performance from the parser,
     //! it is important that all nodes are allocated from a single, contiguous block of memory.
     //! Otherwise, cache misses when jumping between two (or more) disjoint blocks of memory can slow down parsing quite considerably.
-    //! If required, you can tweak <code>RAPIDXML_STATIC_POOL_SIZE</code> and <code>RAPIDXML_DYNAMIC_POOL_SIZE</code> 
+    //! If required, you can tweak <code>RAPIDXML_STATIC_POOL_SIZE</code>, <code>RAPIDXML_DYNAMIC_POOL_SIZE</code> and <code>RAPIDXML_ALIGNMENT</code> 
     //! to obtain best wasted memory to performance compromise.
     //! To do it, define their values before rapidxml.hpp file is included.
     //! \param Ch Character type of created nodes. 
@@ -378,12 +388,10 @@ namespace rapidxml
         
         //! Constructs empty pool with default allocator functions.
         memory_pool()
-            : m_block(&m_static_block)
-            , m_size(RAPIDXML_STATIC_POOL_SIZE)
-            , m_static_block(0)
-            , m_alloc_func(0)
+            : m_alloc_func(0)
             , m_free_func(0)
         {
+            init();
         }
 
         //! Destroys pool and frees all the memory. 
@@ -408,7 +416,7 @@ namespace rapidxml
                                     const Ch *name = 0, const Ch *value = 0, 
                                     std::size_t name_size = 0, std::size_t value_size = 0)
         {
-            void *memory = allocate_memory(sizeof(xml_node<Ch>));
+            void *memory = allocate_aligned(sizeof(xml_node<Ch>));
             xml_node<Ch> *node = new(memory) xml_node<Ch>(type);
             if (name)
             {
@@ -439,7 +447,7 @@ namespace rapidxml
         xml_attribute<Ch> *allocate_attribute(const Ch *name = 0, const Ch *value = 0, 
                                               std::size_t name_size = 0, std::size_t value_size = 0)
         {
-            void *memory = allocate_memory(sizeof(xml_attribute<Ch>));
+            void *memory = allocate_aligned(sizeof(xml_attribute<Ch>));
             xml_attribute<Ch> *attribute = new(memory) xml_attribute<Ch>;
             if (name)
             {
@@ -470,7 +478,7 @@ namespace rapidxml
             assert(source || size);     // Either source or size (or both) must be specified
             if (size == 0)
                 size = internal::measure(source) + 1;
-            Ch *result = static_cast<Ch *>(allocate_memory(size));
+            Ch *result = static_cast<Ch *>(allocate_aligned(size * sizeof(Ch)));
             if (source)
                 for (std::size_t i = 0; i < size; ++i)
                     result[i] = source[i];
@@ -516,17 +524,16 @@ namespace rapidxml
         //! Any nodes or strings allocated from the pool will no longer be valid.
         void clear()
         {
-            while (m_block != &m_static_block)
+            while (m_begin != m_static_memory)
             {
-                block *tmp = m_block->previous_block;
+                char *previous_begin = reinterpret_cast<header *>(align(m_begin))->previous_begin;
                 if (m_free_func)
-                    m_free_func(m_block);
+                    m_free_func(m_begin);
                 else
-                    delete[] reinterpret_cast<char *>(m_block);
-                m_block = tmp;
+                    delete[] m_begin;
+                m_begin = previous_begin;
             }
-            m_block->pointer = m_block->data;       // Restore static block pointer
-            m_size = RAPIDXML_STATIC_POOL_SIZE;     // Restore static block size
+            init();
         }
 
         //! Sets or resets the user-defined memory allocation functions for the pool.
@@ -544,60 +551,91 @@ namespace rapidxml
         //! \param ff Free function, or 0 to restore default function
         void set_allocator(alloc_func *af, free_func *ff)
         {
-            assert(m_block == &m_static_block && m_block->pointer == m_block->data);    // Verify that no memory is allocated yet
+            assert(m_begin == m_static_memory && m_ptr == align(m_begin));    // Verify that no memory is allocated yet
             m_alloc_func = af;
             m_free_func = ff;
         }
 
     private:
 
-        // Memory block
-        struct block
+        struct header
         {
-            block(block *previous_block)
-                : previous_block(previous_block)
-                , pointer(data)
-            {
-            }
-            block *previous_block;                  // Pointer to previous block in list (used during deallocation), or 0 if this is the first block
-            char *pointer;                          // Pointer to first free byte in block
-            char data[RAPIDXML_STATIC_POOL_SIZE];   // Memory
+            char *previous_begin;
         };
 
-        // Allocates memory from block
-        void *allocate_memory(std::size_t size)
+        void init()
         {
-            const std::size_t header_size = m_static_block.data - reinterpret_cast<char *>(&m_static_block);
-            if (m_block->pointer - m_block->data + size > m_size)    // If current block exhausted, allocate a new block
+            m_begin = m_static_memory;
+            m_ptr = align(m_begin);
+            m_end = m_static_memory + sizeof(m_static_memory);
+        }
+        
+        char *align(char *ptr)
+        {
+            std::size_t alignment = ((RAPIDXML_ALIGNMENT - (std::size_t(ptr) & (RAPIDXML_ALIGNMENT - 1))) & (RAPIDXML_ALIGNMENT - 1));
+            return ptr + alignment;
+        }
+        
+        char *allocate_raw(std::size_t size)
+        {
+            // Allocate
+            void *memory;   
+            if (m_alloc_func)   // Allocate memory using either user-specified allocation function or global operator new[]
             {
-                m_size = (size <= RAPIDXML_DYNAMIC_POOL_SIZE ? RAPIDXML_DYNAMIC_POOL_SIZE : size);
-                void *memory;   
-                if (m_alloc_func)   // Allocate memory using either user-specified allocation function or global operator new[]
-                {
-                    memory = m_alloc_func(header_size + m_size);
-                    assert(memory); // Allocator is not allowed to return 0, on failure it must either throw, stop the program or use longjmp
-                }
-                else
-                {
-                    memory = new char[header_size + m_size];
-#ifdef RAPIDXML_NO_EXCEPTIONS
-                    if (!memory)            // If exceptions are disabled, verify memory allocation, because new will not be able to throw bad_alloc
-                        RAPIDXML_PARSE_ERROR("out of memory", 0);
-#endif
-                }
-                m_block = new(memory) block(m_block);   // Place a new block in the allocated memory
+                memory = m_alloc_func(size);
+                assert(memory); // Allocator is not allowed to return 0, on failure it must either throw, stop the program or use longjmp
             }
-            char *result = m_block->pointer;
-            m_block->pointer += size;   // Advance pointer to after current allocation
+            else
+            {
+                memory = new char[size];
+#ifdef RAPIDXML_NO_EXCEPTIONS
+                if (!memory)            // If exceptions are disabled, verify memory allocation, because new will not be able to throw bad_alloc
+                    RAPIDXML_PARSE_ERROR("out of memory", 0);
+#endif
+            }
+            return static_cast<char *>(memory);
+        }
+        
+        void *allocate_aligned(std::size_t size)
+        {
+            // Calculate aligned pointer
+            char *result = align(m_ptr);
+
+            // If not enough memory left in current pool, allocate a new pool
+            if (result + size > m_end)
+            {
+                // Calculate required pool size (may be bigger than RAPIDXML_DYNAMIC_POOL_SIZE)
+                std::size_t pool_size = RAPIDXML_DYNAMIC_POOL_SIZE;
+                if (pool_size < size)
+                    pool_size = size;
+                
+                // Allocate
+                std::size_t alloc_size = sizeof(header) + (2 * RAPIDXML_ALIGNMENT - 2) + pool_size;     // 2 alignments required in worst case: one for header, one for actual allocation
+                char *raw_memory = allocate_raw(alloc_size);
+                    
+                // Setup new pool in allocated memory
+                char *pool = align(raw_memory);
+                header *new_header = reinterpret_cast<header *>(pool);
+                new_header->previous_begin = m_begin;
+                m_begin = raw_memory;
+                m_ptr = pool + sizeof(header);
+                m_end = raw_memory + alloc_size;
+
+                // Calculate aligned pointer again using new pool
+                result = align(m_ptr);
+            }
+
+            // Update pool and return aligned pointer
+            m_ptr = result + size;
             return result;
         }
 
-        block *m_block;             // Current block
-        std::size_t m_size;         // Size of current block
-        block m_static_block;       // Static block, which is the first block that is used  
-        alloc_func *m_alloc_func;   // Allocator function, or 0 if default is to be used
-        free_func *m_free_func;     // Free function, or 0 if default is to be used
-
+        char *m_begin;                                      // Start of raw memory making up current pool
+        char *m_ptr;                                        // First free byte in current pool
+        char *m_end;                                        // One past last available byte in current pool
+        char m_static_memory[RAPIDXML_STATIC_POOL_SIZE];    // Static raw memory
+        alloc_func *m_alloc_func;                           // Allocator function, or 0 if default is to be used
+        free_func *m_free_func;                             // Free function, or 0 if default is to be used
     };
 
     ///////////////////////////////////////////////////////////////////////////
@@ -1450,6 +1488,7 @@ namespace rapidxml
                     return internal::lookup_tables<0>::lookup_attribute_data_1[static_cast<unsigned char>(ch)];
                 if (Quote == Ch('\"'))
                     return internal::lookup_tables<0>::lookup_attribute_data_2[static_cast<unsigned char>(ch)];
+                return 0;       // Should never be executed, to avoid warnings on Comeau
             }
         };
 
@@ -1463,6 +1502,7 @@ namespace rapidxml
                     return internal::lookup_tables<0>::lookup_attribute_data_1_pure[static_cast<unsigned char>(ch)];
                 if (Quote == Ch('\"'))
                     return internal::lookup_tables<0>::lookup_attribute_data_2_pure[static_cast<unsigned char>(ch)];
+                return 0;       // Should never be executed, to avoid warnings on Comeau
             }
         };
 
@@ -2182,7 +2222,6 @@ namespace rapidxml
                 // End of data - error
                 case Ch('\0'):
                     RAPIDXML_PARSE_ERROR("unexpected end of data", text);
-                    break;
 
                 // Data node
                 default:

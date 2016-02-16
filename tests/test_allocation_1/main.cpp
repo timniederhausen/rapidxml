@@ -12,6 +12,7 @@
 
 using namespace std;
 using namespace rapidxml;
+
 #define MAGIC "Dead beef!"
 
 void test_small_dynamic()

@@ -1,9 +1,9 @@
 #ifndef RAPIDXML_PRINT_HPP_INCLUDED
 #define RAPIDXML_PRINT_HPP_INCLUDED
 
-// Copyright (C) 2006, 2008 Marcin Kalicinski
-// Version 1.12
-// Revision $DateTime: 2008/11/06 21:37:14 $
+// Copyright (C) 2006, 2009 Marcin Kalicinski
+// Version 1.13
+// Revision $DateTime: 2009/05/13 01:46:17 $
 //! \file rapidxml_print.hpp This file contains rapidxml printer implementation
 
 #include "rapidxml.hpp"

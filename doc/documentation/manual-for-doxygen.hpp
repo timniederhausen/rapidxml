@@ -1,7 +1,7 @@
 // This documentation is parsed by Doxygen to produce manual with working links to reference section
 
 //! \namespace rapidxml
-//!	<i>Copyright (C) 2006, 2007 Marcin Kalicinski</i>
+//!	<i>Copyright (C) 2006, 2009 Marcin Kalicinski</i>
 //! <br>
 //! <i>See accompanying file <a href="license.txt">license.txt</a> for license information.</i>
 //! <hr>
