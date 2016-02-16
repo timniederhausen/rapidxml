@@ -18,7 +18,7 @@ vector<int> numbering(3, 0);
 void add_to_toc(int level, xml_node<char> *title, xml_attribute<char> *id, bool not_numbered)
 {
     char *style_class;
-    char *fulltitle = doc.allocate_string(title->value_size() + 100);
+    char *fulltitle = doc.allocate_string(0, title->value_size() + 100);
     if (level == 0)
     {
         style_class = "toc1";
@@ -60,17 +60,17 @@ void add_to_toc(int level, xml_node<char> *title, xml_attribute<char> *id, bool 
     }
     else
         throw std::exception("Invalid TOC level");
-    xml_node<char> *tocentry = doc.allocate_element("a", fulltitle);
-    char *link = doc.allocate_string(id->value_size() + 1);
+    xml_node<char> *tocentry = doc.allocate_node(node_element, "a", fulltitle);
+    char *link = doc.allocate_string(0, id->value_size() + 1);
     memcpy(link + 1, id->value(), id->value_size());
     link[0] = '#';
     tocentry->append_attribute(doc.allocate_attribute("href", link, 0, id->value_size() + 1));
     tocentry->append_attribute(doc.allocate_attribute("class", style_class));
-    toc.append_child(tocentry);
-    toc.append_child(doc.allocate_element("br"));
-    xml_node<char> *title_data = title->first_child();
+    toc.append_node(tocentry);
+    toc.append_node(doc.allocate_node(node_element, "br"));
+    xml_node<char> *title_data = title->first_node();
     if (title_data)
-        title->remove_child(title_data);
+        title->remove_node(title_data);
     title->value(fulltitle);
 }
 
@@ -91,7 +91,7 @@ void process_contextless(xml_node<char> *node)
         if (attr)
         {
             attr->name("href");
-            char *value = doc.allocate_string(attr->value_size() + 1);
+            char *value = doc.allocate_string(0, attr->value_size() + 1);
             std::memcpy(value + 1, attr->value(), attr->value_size());
             value[0] = '#';
             attr->value(value, attr->value_size() + 1);
@@ -136,11 +136,11 @@ void process_contextless(xml_node<char> *node)
         if (toc.parent() != 0)
             throw std::exception("More than one <toc> tag found.");
         toc.name("toc-contents");
-        node->append_child(&toc);
+        node->append_node(&toc);
     }
     else if (string(node->name()) == "sect1")
     {
-        xml_node<char> *title = node->first_child("title");
+        xml_node<char> *title = node->first_node("title");
         if (title)
         {
             title->name("h2");
@@ -156,7 +156,7 @@ void process_contextless(xml_node<char> *node)
     }
     else if (string(node->name()) == "sect2")
     {
-        xml_node<char> *title = node->first_child("title");
+        xml_node<char> *title = node->first_node("title");
         if (title)
         {
             title->name("h3");
@@ -172,7 +172,7 @@ void process_contextless(xml_node<char> *node)
     }
     else if (string(node->name()) == "sect3")
     {
-        xml_node<char> *title = node->first_child("title");
+        xml_node<char> *title = node->first_node("title");
         if (title)
         {
             title->name("h4");
@@ -209,7 +209,7 @@ void process_contextless(xml_node<char> *node)
             node->name("th");
         else
             node->name("td");
-        xml_node<char> *rowspan = node->first_child("rowspan");
+        xml_node<char> *rowspan = node->first_node("rowspan");
         if (rowspan)
         {
             xml_attribute<char> *attr = rowspan->first_attribute("count");
@@ -236,13 +236,13 @@ void process_contextless(xml_node<char> *node)
         int n = 1;
         if (node->first_attribute("count"))
             n = atoi(node->first_attribute("count")->value());
-        char *data = doc.allocate_string(n);
+        char *data = doc.allocate_string(0, n);
         memset(data, ' ', n);
         node->value(data, n);
     }
 
     // Process recursively
-    xml_node<char> *child = node->first_child();
+    xml_node<char> *child = node->first_node();
     while (child)
     {
         xml_node<char> *next = child->next_sibling();
@@ -255,17 +255,17 @@ void process_para(xml_node<char> *node)
 {
     if (string(node->name()) == "parameterlist")
     {
-        node->parent()->remove_child(node);
+        node->parent()->remove_node(node);
         return;
     }
     else if (string(node->name()) == "simplesect")
     {
-        node->parent()->remove_child(node);
+        node->parent()->remove_node(node);
         return;
     }
 
     // Process recursively
-    xml_node<char> *child = node->first_child();
+    xml_node<char> *child = node->first_node();
     while (child)
     {
         xml_node<char> *next = child->next_sibling();
@@ -282,7 +282,7 @@ void process(xml_node<char> *node)
      }
      else
      {
-         xml_node<char> *child = node->first_child();
+         xml_node<char> *child = node->first_node();
          while (child)
          {
              xml_node<char> *next = child->next_sibling();

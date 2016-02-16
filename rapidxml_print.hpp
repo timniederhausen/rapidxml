@@ -162,7 +162,7 @@ namespace rapidxml
         template<class OutIt, class Ch>
         inline OutIt print_children(OutIt out, const xml_node<Ch> *node, int flags, int indent)
         {
-            for (xml_node<Ch> *child = node->first_child(); child; child = child->next_sibling())
+            for (xml_node<Ch> *child = node->first_node(); child; child = child->next_sibling())
                 out = print_node(out, child, flags, indent);
             return out;
         }
@@ -244,50 +244,55 @@ namespace rapidxml
             out = copy_chars(node->name(), node->name() + node->name_size(), out);
             out = print_attributes(out, node, flags);
             
-            // Test if node has data in its value
-            // If present, it will be printed as if it was a data child
-            bool has_data_in_value = false;
-            if (node->value_size() > 0)     // If value is present
+            // Test if node contains a single data node
+            bool has_single_data_node = false;
+            if (node->first_node())
             {
-                has_data_in_value = true;
-                // Test if node has any data children, if yes ignore value
-                for (xml_node<Ch> *child = node->first_child(); child; child = child->next_sibling())
+                for (xml_node<Ch> *child = node->first_node(); child; child = child->next_sibling())
                     if (child->type() == node_data)
                     {
-                        has_data_in_value = false;
+                        has_single_data_node = (child->next_sibling() == 0);
                         break;
                     }
             }
-                
-            // If element has children or has data in value
-            if (node->first_child() || has_data_in_value)
+
+            if (node->value_size() == 0 && !node->first_node())
             {
-                // Print tag ending
-                *out = Ch('>'), ++out;
-                *out = Ch('\n'), ++out;
-                // Print value as a data child, if needed
-                if (has_data_in_value)
-                {
-                    if (!(flags & print_no_indenting))
-                        out = fill_chars(out, indent + 1, Ch('\t'));
-                    copy_chars(node->value(), node->value() + node->value_size(), out);
-                    if (!(flags & print_no_indenting))
-                        *out = Ch('\n'), ++out;
-                }
-                // Print children
-                out = print_children(out, node, flags, indent + 1);
-                // Print node end
-                if (!(flags & print_no_indenting))
-                    out = fill_chars(out, indent, Ch('\t'));
-                *out = Ch('<'), ++out;
+                // Print childless node tag ending
                 *out = Ch('/'), ++out;
-                out = copy_chars(node->name(), node->name() + node->name_size(), out);
                 *out = Ch('>'), ++out;
             }
             else
             {
-                // Print childless node end
+                // Print normal node tag ending
+                *out = Ch('>'), ++out;
+
+                // Test if node contains a single data node only (and no other nodes)
+                xml_node<Ch> *child = node->first_node();
+                if (!child)
+                {
+                    // If node has no children, only print its value without indenting
+                    copy_chars(node->value(), node->value() + node->value_size(), out);
+                }
+                else if (child->next_sibling() == 0 && child->type() == node_data)
+                {
+                    // If node has a sole data child, only print its value without indenting
+                    copy_chars(child->value(), child->value() + child->value_size(), out);
+                }
+                else
+                {
+                    // Print all children with full indenting
+                    if (!(flags & print_no_indenting))
+                        *out = Ch('\n'), ++out;
+                    out = print_children(out, node, flags, indent + 1);
+                    if (!(flags & print_no_indenting))
+                        out = fill_chars(out, indent, Ch('\t'));
+                }
+
+                // Print node end
+                *out = Ch('<'), ++out;
                 *out = Ch('/'), ++out;
+                out = copy_chars(node->name(), node->name() + node->name_size(), out);
                 *out = Ch('>'), ++out;
             }
             return out;

@@ -110,7 +110,7 @@ struct pugxml_parser
 
 struct strlen_parser
 {
-    static size_t length;
+    static size_t length;   // static to prevent it from being optimized away along with the timed strlen() call
     void parse(char *data)
     {
         length = strlen(data);
@@ -173,7 +173,6 @@ void test_all(const char *filename)
     test<strlen_parser>(filename, "strlen() on XML data");
     printf("    rapidxml:\n");
     test<rapidxml_parser<parse_fastest> >(filename, "mode=fastest");
-    //test<rapidxml_parser<0*parse_normalize_whitespace | 0*parse_no_string_terminators | parse_no_entity_translation | parse_no_data_nodes> >(filename, "mode=fastest");
     test<rapidxml_parser<parse_default> >(filename, "mode=default");
     printf("    pugixml:\n");
     test<pugixml_parser<pugi::parse_minimal> >(filename, "mode=fastest");

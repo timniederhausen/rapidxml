@@ -7,7 +7,7 @@ namespace rapidxml
 {
     void parse_error_handler(const char *, void *) 
     { 
-        error = 1;
+        exit(0);
     }
 }
 
@@ -16,6 +16,6 @@ using namespace rapidxml;
 int main(int argc, char *argv[])
 {
     xml_document<char> doc;
-    doc.parse<0>(argv[1]);
-    return error;
+    doc.parse<0>(argv[0]);
+    return 1;
 }

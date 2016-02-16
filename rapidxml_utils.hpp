@@ -15,7 +15,7 @@ namespace rapidxml
 {
 
     //! Represents data loaded from a file
-    template<class Ch>
+    template<class Ch = char>
     class file
     {
         
@@ -90,7 +90,7 @@ namespace rapidxml
     template<class Ch>
     inline std::size_t count_children(xml_node<Ch> *node)
     {
-        xml_node<Ch> *child = node->first_child();
+        xml_node<Ch> *child = node->first_node();
         std::size_t count = 0;
         while (child)
         {

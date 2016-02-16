@@ -51,7 +51,7 @@ void test_element_node()
     file<char> xml("../xml_files/simple_element.xml");
     doc.parse<Flags>(xml.data());
 
-    xml_node<char> *element = doc.first_child();
+    xml_node<char> *element = doc.first_node();
     REQUIRE(element);
     REQUIRE(element->type() == node_element);
     CHECK(element->parent() == &doc);
@@ -81,7 +81,7 @@ void test_attribute_node()
     file<char> xml("../xml_files/simple_attributes.xml");
     doc.parse<Flags>(xml.data());
 
-    xml_node<char> *element = doc.first_child();
+    xml_node<char> *element = doc.first_node();
     REQUIRE(element);
     CHECK(count_attributes(element) == 7);
     xml_attribute<char> *attr = element->first_attribute();
@@ -114,9 +114,9 @@ void test_data_node()
     file<char> xml("../xml_files/simple_data.xml");
     doc.parse<Flags>(xml.data());
 
-    xml_node<char> *element = doc.first_child();
+    xml_node<char> *element = doc.first_node();
     REQUIRE(element);
-    xml_node<char> *data = element->first_child();
+    xml_node<char> *data = element->first_node();
 
     if (Flags & parse_no_data_nodes)
     {
@@ -129,13 +129,29 @@ void test_data_node()
         CHECK(data->value() == element->value());
         if (Flags & parse_normalize_whitespace)
         {
-            CHECK(value<Flags>(data) == "foo bar");
-            CHECK(data->value_size() == 7);
+            if (Flags & parse_trim_whitespace)
+            {
+                CHECK(value<Flags>(data) == "foo bar");
+                CHECK(data->value_size() == 7);
+            }
+            else
+            {
+                CHECK(value<Flags>(data) == " foo bar ");
+                CHECK(data->value_size() == 9);
+            }
         }
         else
         {
-            CHECK(value<Flags>(data) == " \nfoo  bar\t");
-            CHECK(data->value_size() == 11);
+            if (Flags & parse_trim_whitespace)
+            {
+                CHECK(value<Flags>(data) == "foo  bar");
+                CHECK(data->value_size() == 8);
+            }
+            else
+            {
+                CHECK(value<Flags>(data) == "  foo  bar  ");
+                CHECK(data->value_size() == 12);
+            }
         }
     }
 }
@@ -149,9 +165,9 @@ void test_cdata_node()
     file<char> xml("../xml_files/simple_cdata.xml");
     doc.parse<Flags>(xml.data());
 
-    xml_node<char> *element = doc.first_child();
+    xml_node<char> *element = doc.first_node();
     REQUIRE(element);
-    xml_node<char> *cdata = element->first_child();
+    xml_node<char> *cdata = element->first_node();
     
     if (Flags & parse_no_data_nodes)
     {
@@ -178,13 +194,13 @@ void test_declaration_node()
 
     if (!(Flags & parse_declaration_node))
     {
-        xml_node<char> *node = doc.first_child();
+        xml_node<char> *node = doc.first_node();
         REQUIRE(node);
         CHECK(node->type() == node_element);
     }
     else
     {
-        xml_node<char> *declaration = doc.first_child();
+        xml_node<char> *declaration = doc.first_node();
         REQUIRE(declaration);
         CHECK(declaration->type() == node_declaration);
         CHECK(count_attributes(declaration) == 3);
@@ -209,24 +225,24 @@ void test_comment_node()
     file<char> xml("../xml_files/simple_comments.xml");
     doc.parse<Flags>(xml.data());
 
-    xml_node<char> *element = doc.first_child();
+    xml_node<char> *element = doc.first_node();
     REQUIRE(element);
     
     if (!(Flags & parse_comment_nodes))
     {
-        REQUIRE(element->first_child() == 0);
+        REQUIRE(element->first_node() == 0);
     }
     else
     {
-        xml_node<char> *comment = element->first_child();
+        xml_node<char> *comment = element->first_node();
         REQUIRE(comment);
         CHECK(comment->type() == node_comment);
-        CHECK(comment->name() == 0);
+        CHECK(*comment->name() == 0);
         CHECK(value<Flags>(comment) == "");
         comment = comment->next_sibling();
         REQUIRE(comment);
         CHECK(comment->type() == node_comment);
-        CHECK(comment->name() == 0);
+        CHECK(*comment->name() == 0);
         CHECK(value<Flags>(comment) == "comment1");
     }
 
@@ -243,16 +259,16 @@ void test_doctype_node()
 
     if (!(Flags & parse_doctype_node))
     {
-        xml_node<char> *node = doc.first_child();
+        xml_node<char> *node = doc.first_node();
         REQUIRE(node);
         CHECK(node->type() == node_element);
     }
     else
     {
-        xml_node<char> *doctype = doc.first_child();
+        xml_node<char> *doctype = doc.first_node();
         REQUIRE(doctype);
         CHECK(doctype->type() == node_doctype);
-        CHECK(doctype->name() == 0);
+        CHECK(*doctype->name() == 0);
         CHECK(value<Flags>(doctype) == "el1 [\n\t<!ELEMENT el1 EMPTY>\n]");
     }
 
@@ -269,13 +285,13 @@ void test_pi_node()
 
     if (!(Flags & parse_pi_nodes))
     {
-        xml_node<char> *node = doc.first_child();
+        xml_node<char> *node = doc.first_node();
         REQUIRE(node);
         CHECK(node->type() == node_element);
     }
     else
     {
-        xml_node<char> *pi = doc.first_child();
+        xml_node<char> *pi = doc.first_node();
         REQUIRE(pi);
         CHECK(pi->type() == node_pi);
         CHECK(name<Flags>(pi) == "target");
@@ -301,7 +317,10 @@ void test_all()
 int main()
 {
     test_all<parse_fastest>();
-    test_all<parse_default>();
-    test_all<parse_default | parse_normalize_whitespace>();
+    test_all<0>();
+    test_all<parse_full>();
+    test_all<parse_normalize_whitespace>();
+    test_all<parse_trim_whitespace>();
+    test_all<parse_trim_whitespace | parse_normalize_whitespace>();
     return test::final_results();
 }

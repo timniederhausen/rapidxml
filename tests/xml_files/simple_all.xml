@@ -17,7 +17,8 @@
 	<cdata>
 		<![CDATA[data<fake>&amp;&#20;</fake>]]>
 	</cdata>
-	standalone data
+	standalone            
+	data
 	<element>
 		<child>data</child>
 	</element>

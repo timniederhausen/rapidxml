@@ -116,8 +116,10 @@
 				<h1>
 					<span style="font-weight: bold; font-style: italic;">
 						<span style="color: #800016">Rapid</span>Xml
-					</span>Manual
+					</span> Manual
 				</h1>
+
+				<h3>Version 1.1</h3>
 
 				<!-- rapidxml namespace -->
 

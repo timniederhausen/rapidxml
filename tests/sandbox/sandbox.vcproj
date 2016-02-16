@@ -184,6 +184,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\rapidxml_iterators.hpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\rapidxml_print.hpp"
 			>
 		</File>

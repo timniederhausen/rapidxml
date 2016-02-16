@@ -116,7 +116,7 @@ void convert_tinyxml_to_rapidxml(TiXmlNode *src, xml_node<char> *dest, xml_docum
         
         // If child was created, append it
         if (dest_child)
-            dest->append_child(dest_child);
+            dest->append_node(dest_child);
     }
 }
 
@@ -218,8 +218,8 @@ bool compare_nodes(xml_node<char> *n1, xml_node<char> *n2, string &desc)
 
     // Compare children
     {
-        xml_node<char> *ch1 = n1->first_child(), 
-                       *ch2 = n2->first_child();
+        xml_node<char> *ch1 = n1->first_node(), 
+                       *ch2 = n2->first_node();
         for (; ch1 && ch2; ch1 = ch1->next_sibling(), ch2 = ch2->next_sibling())
         {
             if (!compare_nodes(ch1, ch2, desc))
@@ -294,7 +294,7 @@ int main()
         // Test all files in the list
         for (vector<string>::iterator it = files.begin(); it != files.end(); ++it)
         {
-            const int Flags = parse_normalize_whitespace | parse_no_element_values;
+            const int Flags = parse_normalize_whitespace | parse_trim_whitespace | parse_no_element_values;
             if ((*it)[0] == '*')    // Skip tinyxml comparison if * found
                 test_xml_file<Flags>(string("../") + (it->c_str() + 1), true);
             else

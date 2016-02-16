@@ -78,7 +78,6 @@ void test_random_mutations()
     int count = 0;
     for (int i = 0; i < num_mutations; ++i)
     {
-
         // Make a copy of data
         vector<char> data(original);
         
@@ -113,11 +112,17 @@ int main()
     test_progressive_truncations<parse_fastest>();
     test_progressive_truncations<parse_non_destructive>();
     test_progressive_truncations<0>();
+    test_progressive_truncations<parse_trim_whitespace>();
+    test_progressive_truncations<parse_normalize_whitespace>();
+    test_progressive_truncations<parse_trim_whitespace | parse_normalize_whitespace>();
     test_progressive_truncations<parse_full>();
     
     test_random_mutations<parse_fastest>();
     test_random_mutations<parse_non_destructive>();
     test_random_mutations<0>();
+    test_random_mutations<parse_trim_whitespace>();
+    test_random_mutations<parse_normalize_whitespace>();
+    test_random_mutations<parse_trim_whitespace | parse_normalize_whitespace>();
     test_random_mutations<parse_full>();
 
     return test::final_results();

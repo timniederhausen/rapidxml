@@ -20,14 +20,19 @@ inline tick_t ticks()
 
 #define _SCL_SECURE_NO_DEPRECATE
 //#define RAPIDXML_NO_EXCEPTIONS
+#define RAPIDXML_STATIC_POOL_SIZE 48
 #include "../../rapidxml.hpp"
 #include "../../rapidxml_print.hpp"
+#include "../../rapidxml_utils.hpp"
+//#include "../../rapidxml_print.hpp"
+//#include "../../rapidxml_iterators.hpp"
 //#include <cstdio>
 //#include <cstring>
 //#include <string>
 //#include <fstream>
 #include <iostream>
 //#include <vector>
+//#include <algorithm>
 
 //#define CHAR wchar_t
 //#define T(x) L##x
@@ -43,57 +48,67 @@ namespace rapidxml
 
 int main()
 {
-
     using namespace rapidxml;
     using namespace std;
 
     /*
-    xml_document<char> doc;
-    xml_node<char> *node1 = doc.allocate_node(node_element);
-    xml_node<char> *node2 = doc.allocate_node(node_data);
-    xml_attribute<char> *node3 = doc.allocate_attribute();
-    char *q = node2->value();
-    const char *q2 = nullstr<char>();
-    node1->name("gogo", 4);
-    node1->append_child(node2);
-    node1->append_attribute(node3);
-    node2->value("bobo<>'&\"", 9);
-    node3->name("foobar", 6);
-    node3->value("bobo<>&", 7);
-    doc.append_child(node1);
-
-    cout << doc;
+    memory_pool<> pool;
+    pool.allocate_node(node_element);
+    pool.allocate_node(node_element);
+    pool.clear();
     */
 
     /*
-    ifstream stream("hamlet.xml", ios::binary);
-    stream.unsetf(ios::skipws);
-    vector<char> v;
-    v.assign(istream_iterator<char>(stream), istream_iterator<char>());
-    v.push_back(0);
-    char *ch = &v.front();
-
-    //char data[] = "<ala>&#169;</ala>";
-    //char *ch = data;
-
-    try
+    using namespace rapidxml;
+    using namespace std;
+    xml_document<char> doc;
+    doc.append_node(doc.allocate_element("1"));
+    doc.append_node(doc.allocate_element("2"));
+    doc.append_node(doc.allocate_element("3"));
+    doc.append_attribute(doc.allocate_attribute("a1"));
+    doc.append_attribute(doc.allocate_attribute("a2"));
+    doc.append_attribute(doc.allocate_attribute("a3"));
+    node_iterator<char> it(&doc);
+    for (node_iterator<char> it(&doc); it != node_iterator<char>(); ++it)
     {
-        xml_document<CHAR, f_non_destructive> doc;
-        doc.parse(ch);
-        //doc.print(ostream_iterator<char>(cout));
+        cout << it->name() << "\n";
+        cout << (*it).name() << "\n";
     }
-    catch (parse_error &e)
+    for (attribute_iterator<char> it(&doc); it != attribute_iterator<char>(); ++it)
     {
-        CHAR *pos = e.where<CHAR>() - 10;
-        if (pos < ch)
-            pos = ch;
-        int len = std::min(int(strlen(pos)), 30);
-        int pre = static_cast<int>(e.where<CHAR>() - pos);
-        printf("%s\n%s^\n%s\n ", std::string(pos, pos + len).c_str(), std::string(pre, ' ').c_str(), e.what());
+        cout << it->name() << "\n";
+        cout << (*it).name() << "\n";
     }
+    //stable_sort(node_iterator<char>(&doc), node_iterator<char>());
 
-    //using namespace boost::profiler;
-    //BOOST_PROFILER_DUMP_ALL_EX(std::cout, c_short, c_exclusive, 1000);
+    struct cmp
+    {
+        cmp(const char *name)
+            : name(name)
+        {
+        }
+        bool operator()(xml_node<char> &n)
+        {
+            return strcmp(n.name(), name) == 0;
+        }
+        const char *name;
+    };
+    node_iterator<char> it2 = find_if(node_iterator<char>(&doc), node_iterator<char>(), cmp("2"));
     */
+    /*
+    using namespace rapidxml;
+    using namespace std;
+    xml_document<char> doc;
+    doc.append_node(doc.allocate_element("ABCDEFGHIJKLMNOPQRSTUVWXYZ"));
+    doc.append_node(doc.allocate_element("abcdefghijklmnopqrstuvwxyz"));
+    xml_node<char> *r = doc.first_node("abcdefghijklmnopqrstuvwxyz", 0, false);
+    return (int)r;
+    */
+
+    xml_document<> doc;
+    file<> f("test.xml");
+    doc.parse<parse_trim_whitespace | parse_normalize_whitespace>(f.data());
+    print(cout, doc);
+
 
 }

@@ -92,8 +92,8 @@
 //! The following code causes RapidXml to parse a zero-terminated string named <code>text</code>:
 //! <pre>
 //! using namespace rapidxml;
-//! xml_document<char> doc;    // char is the type of character to be used
-//! doc.parse<0>(text);        // 0 means default parse flags
+//! xml_document<> doc;    // character type defaults to char
+//! doc.parse<0>(text);    // 0 means default parse flags
 //! </pre>
 //! <code>doc</code> object is now a root of DOM tree containing representation of the parsed XML.
 //! Because all RapidXml interface is contained inside namespace <code>rapidxml</code>, 
@@ -108,14 +108,14 @@
 //!
 //! To access the DOM tree, use methods of xml_node and xml_attribute classes:
 //! <pre>
-//! std::cout << "Name of my first node is: " << doc.first_node()->name() << "\n";
-//! xml_node<char> *node = doc.first_node("foobar");
-//! std::cout << "Node foobar has value " << node->value() << "\n";
-//! for (xml_attribute<char> *attr = node->first_attribute();
+//! cout << "Name of my first node is: " << doc.first_node()->name() << "\n";
+//! xml_node<> *node = doc.first_node("foobar");
+//! cout << "Node foobar has value " << node->value() << "\n";
+//! for (xml_attribute<> *attr = node->first_attribute();
 //!      attr; attr = attr->next_attribute())
 //! {
-//!     std::cout << "Node foobar has attribute " << attr->name() << " ";
-//!     std::cout << "with value " << attr->value() << "\n";
+//!     cout << "Node foobar has attribute " << attr->name() << " ";
+//!     cout << "with value " << attr->value() << "\n";
 //! }
 //! </pre>
 //!
@@ -124,10 +124,10 @@
 //! DOM tree produced by the parser is fully modifiable. Nodes and attributes can be added/removed,
 //! and their contents changed. The below example creates a HTML document, whose sole contents is a link to google.com website:
 //! <pre>
-//! xml_document<char> doc;
-//! xml_node<char> *node = doc.allocate_element("a", "Google");
-//! doc.append_child(node);
-//! xml_attribute<char> *attr = doc.allocate_attribute("href", "google.com");
+//! xml_document<> doc;
+//! xml_node<> *node = doc.allocate_node(node_element, "a", "Google");
+//! doc.append_node(node);
+//! xml_attribute<> *attr = doc.allocate_attribute("href", "google.com");
 //! node->append_attribute(attr);
 //! </pre>
 //! One quirk is that nodes and attributes <i>do not own</i> the text of their names and values.
@@ -138,10 +138,9 @@
 //! But the code below uses memory_pool::allocate_string() function to allocate node name
 //! (which will have the same lifetime as the document), and assigns it to a new node:
 //! <pre>
-//! xml_document<char> doc;
+//! xml_document<> doc;
 //! char *node_name = doc.allocate_string(name);        // Allocate string and copy name into it
-//! xml_node<char> *node = doc.allocate_node(node_element);
-//! node->name(node_name);      // Set node name to node_name
+//! xml_node<> *node = doc.allocate_node(node_element, node_name);  // Set node name to node_name
 //! </pre>
 //! Check \ref reference section for description of the entire interface.
 //!
