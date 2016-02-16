@@ -1,0 +1,5 @@
+*.pyc
+*.pyo
+
+/doc/documentation/xml
+/doc/documentation/tmp.html
