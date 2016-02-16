@@ -1,9 +1,9 @@
 #ifndef RAPIDXML_HPP_INCLUDED
 #define RAPIDXML_HPP_INCLUDED
 
-// Copyright (C) 2006, 2008 Marcin Kalicinski
-// Version 1.11
-// Revision $DateTime: 2008/05/04 14:39:39 $
+// Copyright (C) 2006, 2007 Marcin Kalicinski
+// Version 1.1
+// Revision $DateTime: 2007/08/05 02:33:38 $
 //! \file rapidxml.hpp This file contains rapidxml parser and DOM implementation
 
 // If standard library is disabled, user must provide implementations of required functions and typedefs
@@ -493,7 +493,6 @@ namespace rapidxml
                 m_block = tmp;
             }
             m_block->pointer = m_block->data;       // Restore static block pointer
-            m_size = RAPIDXML_STATIC_POOL_SIZE;     // Restore static block size
         }
 
         //! Sets or resets the user-defined memory allocation functions for the pool.

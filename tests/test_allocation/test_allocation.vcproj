@@ -2,8 +2,8 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="test_nodes"
-	ProjectGUID="{90F1561B-B14F-469C-BCFD-4B0BFB2554A4}"
+	Name="test_allocation"
+	ProjectGUID="{129D61B8-B35E-4230-9363-08F831825353}"
 	RootNamespace="nanoxmltest"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
@@ -170,6 +170,14 @@
 	<Files>
 		<File
 			RelativePath=".\main.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\test_small_dynamic.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\test_small_static.cpp"
 			>
 		</File>
 	</Files>

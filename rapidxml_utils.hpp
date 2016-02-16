@@ -1,7 +1,7 @@
 #ifndef RAPIDXML_UTILS_HPP_INCLUDED
 #define RAPIDXML_UTILS_HPP_INCLUDED
 
-// Revision $DateTime: 2007/03/22 00:57:00 $
+// Revision $DateTime: 2007/08/08 00:56:15 $
 //! \file rapidxml_utils.hpp This file contains high-level rapidxml utilities that can be useful
 //! in certain simple scenarios. They should probably not be used if maximizing performance is the main objective.
 
