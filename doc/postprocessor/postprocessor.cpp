@@ -278,7 +278,7 @@ void process(xml_node<char> *node)
 {
      if (string(node->name()) == "para")
      {
-         process_para(node);       
+         process_para(node);
      }
      else
      {

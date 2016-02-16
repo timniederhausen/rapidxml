@@ -8,7 +8,7 @@ using namespace rapidxml;
 void test_parent()
 {
     cout << "Test parent()...\n";
-    
+
     xml_document<char> doc;
     xml_node<char> *node = doc.allocate_node(node_element);
     CHECK(node->parent() == 0);
@@ -20,11 +20,11 @@ void test_parent()
 void test_name()
 {
     cout << "Test name()...\n";
-    
+
     xml_document<char> doc;
     CHECK(*doc.name() == 0);
     CHECK(doc.name_size() == 0);
-    
+
     doc.name(0, 0);
     CHECK(*doc.name() == 0);
     CHECK(doc.name_size() == 0);
@@ -43,11 +43,11 @@ void test_name()
 void test_value()
 {
     cout << "Test value()...\n";
-    
+
     xml_document<char> doc;
     CHECK(*doc.value() == 0);
     CHECK(doc.value_size() == 0);
-    
+
     doc.value(0, 0);
     CHECK(*doc.value() == 0);
     CHECK(doc.value_size() == 0);
@@ -66,7 +66,7 @@ void test_value()
 void test_clear()
 {
     cout << "Test clear()...\n";
-    
+
     xml_document<char> doc;
     xml_node<char> *node1 = doc.allocate_node(node_element);
     xml_node<char> *node2 = doc.allocate_node(node_element);
@@ -85,7 +85,7 @@ void test_clear()
 void test_clone_node()
 {
     cout << "Test clone_node()...\n";
-    
+
     xml_document<char> doc;
     xml_node<char> *node1 = doc.allocate_node(node_element, "elem1", "elemval1");
     xml_node<char> *node2 = doc.allocate_node(node_element, "elem2", "elemval2");
@@ -95,7 +95,7 @@ void test_clone_node()
     doc.append_node(node2);
     node1->append_attribute(attr1);
     node2->append_attribute(attr2);
-    
+
     memory_pool<char> mp;
     xml_node<char> *result = mp.clone_node(&doc);
     CHECK(result->first_node()->name() == doc.first_node()->name());
@@ -111,7 +111,7 @@ void test_clone_node()
 void test_node_constructor()
 {
     cout << "Test node_constructor()...\n";
-    
+
     xml_document<char> doc;
     CHECK(doc.parent() == 0);
     CHECK(doc.first_node() == 0);
@@ -123,9 +123,9 @@ void test_node_constructor()
 void test_prepend_child()
 {
     cout << "Test prepend_node()...\n";
-    
+
     xml_document<char> doc;
-    
+
     xml_node<char> *node1 = doc.allocate_node(node_element);
     doc.prepend_node(node1);
     CHECK(doc.first_node() == node1);
@@ -149,9 +149,9 @@ void test_prepend_child()
 void test_append_child()
 {
     cout << "Test append_node()...\n";
-    
+
     xml_document<char> doc;
-    
+
     xml_node<char> *node1 = doc.allocate_node(node_element);
     doc.append_node(node1);
     CHECK(doc.first_node() == node1);
@@ -175,9 +175,9 @@ void test_append_child()
 void test_insert_child()
 {
     cout << "Test insert_node()...\n";
-    
+
     xml_document<char> doc;
-    
+
     // Insert to empty node
     xml_node<char> *node1 = doc.allocate_node(node_element);
     doc.insert_node(0, node1);
@@ -239,7 +239,7 @@ void test_insert_child()
 void test_remove_first_child()
 {
     cout << "Test remove_first_node()...\n";
-    
+
     xml_document<char> doc;
     xml_node<char> *node1 = doc.allocate_node(node_element);
     xml_node<char> *node2 = doc.allocate_node(node_element);
@@ -252,7 +252,7 @@ void test_remove_first_child()
     CHECK(node2->parent() == &doc);
     CHECK(node2->previous_sibling() == 0);
     CHECK(node2->next_sibling() == 0);
-    
+
     doc.remove_first_node();
     CHECK(doc.first_node() == 0);
     CHECK(node2->parent() == 0);
@@ -261,7 +261,7 @@ void test_remove_first_child()
 void test_remove_last_child()
 {
     cout << "Test remove_last_node()...\n";
-    
+
     xml_document<char> doc;
     xml_node<char> *node1 = doc.allocate_node(node_element);
     xml_node<char> *node2 = doc.allocate_node(node_element);
@@ -283,7 +283,7 @@ void test_remove_last_child()
 void test_remove_child()
 {
     cout << "Test remove_node()...\n";
-    
+
     xml_document<char> doc;
     xml_node<char> *node1 = doc.allocate_node(node_element);
     xml_node<char> *node2 = doc.allocate_node(node_element);
@@ -327,7 +327,7 @@ void test_remove_child()
     CHECK(node4->parent() == &doc);
     CHECK(node4->previous_sibling() == node3);
     CHECK(node4->next_sibling() == 0);
-    
+
     // Remove from back
     doc.remove_node(node4);
     CHECK(doc.first_node() == node3);
@@ -345,7 +345,7 @@ void test_remove_child()
 void test_remove_all_children()
 {
     cout << "Test remove_all_nodes()...\n";
-    
+
     xml_document<char> doc;
     xml_node<char> *node1 = doc.allocate_node(node_element);
     xml_node<char> *node2 = doc.allocate_node(node_element);
@@ -364,7 +364,7 @@ void test_remove_all_children()
 void test_attribute_constructor()
 {
     cout << "Test attribute_constructor()...\n";
-    
+
     xml_document<char> doc;
     xml_attribute<char> *attr = doc.allocate_attribute();
     CHECK(attr->parent() == 0);
@@ -375,9 +375,9 @@ void test_attribute_constructor()
 void test_prepend_attribute()
 {
     cout << "Test prepend_attribute()...\n";
-    
+
     xml_document<char> doc;
-    
+
     xml_attribute<char> *attr1 = doc.allocate_attribute();
     doc.prepend_attribute(attr1);
     CHECK(doc.first_attribute() == attr1);
@@ -401,9 +401,9 @@ void test_prepend_attribute()
 void test_append_attribute()
 {
     cout << "Test append_attribute()...\n";
-    
+
     xml_document<char> doc;
-    
+
     xml_attribute<char> *attr1 = doc.allocate_attribute();
     doc.append_attribute(attr1);
     CHECK(doc.first_attribute() == attr1);
@@ -427,9 +427,9 @@ void test_append_attribute()
 void test_insert_attribute()
 {
     cout << "Test insert_attribute()...\n";
-    
+
     xml_document<char> doc;
-    
+
     // Insert to empty attr
     xml_attribute<char> *attr1 = doc.allocate_attribute();
     doc.insert_attribute(0, attr1);
@@ -491,7 +491,7 @@ void test_insert_attribute()
 void test_remove_first_attribute()
 {
     cout << "Test remove_first_attribute()...\n";
-    
+
     xml_document<char> doc;
     xml_attribute<char> *attr1 = doc.allocate_attribute();
     xml_attribute<char> *attr2 = doc.allocate_attribute();
@@ -504,7 +504,7 @@ void test_remove_first_attribute()
     CHECK(attr2->parent() == &doc);
     CHECK(attr2->previous_attribute() == 0);
     CHECK(attr2->next_attribute() == 0);
-    
+
     doc.remove_first_attribute();
     CHECK(doc.first_attribute() == 0);
     CHECK(attr2->parent() == 0);
@@ -513,7 +513,7 @@ void test_remove_first_attribute()
 void test_remove_last_attribute()
 {
     cout << "Test remove_last_attribute()...\n";
-    
+
     xml_document<char> doc;
     xml_attribute<char> *attr1 = doc.allocate_attribute();
     xml_attribute<char> *attr2 = doc.allocate_attribute();
@@ -535,7 +535,7 @@ void test_remove_last_attribute()
 void test_remove_attribute()
 {
     cout << "Test remove_attribute()...\n";
-    
+
     xml_document<char> doc;
     xml_attribute<char> *attr1 = doc.allocate_attribute();
     xml_attribute<char> *attr2 = doc.allocate_attribute();
@@ -579,7 +579,7 @@ void test_remove_attribute()
     CHECK(attr4->parent() == &doc);
     CHECK(attr4->previous_attribute() == attr3);
     CHECK(attr4->next_attribute() == 0);
-    
+
     // Remove from back
     doc.remove_attribute(attr4);
     CHECK(doc.first_attribute() == attr3);
@@ -597,7 +597,7 @@ void test_remove_attribute()
 void test_remove_all_attributes()
 {
     cout << "Test remove_all_attributes()...\n";
-    
+
     xml_document<char> doc;
     xml_attribute<char> *attr1 = doc.allocate_attribute();
     xml_attribute<char> *attr2 = doc.allocate_attribute();
@@ -662,7 +662,7 @@ void test_search_last_child()
     CHECK(node == node1);
     node = doc.last_node("bar");
     CHECK(node == node3);
-    
+
     node = doc.last_node("FOO", 0);
     CHECK(!node);
     node = doc.last_node("FOO", 0, false);
@@ -908,7 +908,7 @@ int main()
     test_remove_last_child();
     test_remove_child();
     test_remove_all_children();
-    
+
     // Attribute
     test_attribute_constructor();
     test_prepend_attribute();
@@ -928,11 +928,11 @@ int main()
     test_search_last_attribute();
     test_search_previous_attribute();
     test_search_next_attribute();
-    
+
     // Other
     test_char_types();
     test_parent_document();
-    
+
     // Print final result
     return test::final_results();
 }

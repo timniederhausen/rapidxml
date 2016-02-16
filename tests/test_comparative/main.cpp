@@ -15,7 +15,7 @@
 using namespace rapidxml;
 using namespace std;
 
-template<int Flags> 
+template<int Flags>
 void convert_tinyxml_to_rapidxml_declaration(TiXmlDeclaration *src, xml_node<char> *dest, xml_document<char> *doc)
 {
     if (*src->Version())
@@ -41,7 +41,7 @@ void convert_tinyxml_to_rapidxml_declaration(TiXmlDeclaration *src, xml_node<cha
     }
 }
 
-template<int Flags> 
+template<int Flags>
 void convert_tinyxml_to_rapidxml_attributes(TiXmlElement *src, xml_node<char> *dest, xml_document<char> *doc)
 {
     for (TiXmlAttribute *src_attr = src->FirstAttribute(); src_attr; src_attr = src_attr->Next())
@@ -53,13 +53,13 @@ void convert_tinyxml_to_rapidxml_attributes(TiXmlElement *src, xml_node<char> *d
     }
 }
 
-template<int Flags> 
+template<int Flags>
 void convert_tinyxml_to_rapidxml(TiXmlNode *src, xml_node<char> *dest, xml_document<char> *doc)
 {
     // For all nodes
     for (TiXmlNode *src_child = src->FirstChild(); src_child; src_child = src_child->NextSibling())
     {
-        
+
         // Create proper node type
         xml_node<char> *dest_child = 0;
         switch (src_child->Type())
@@ -112,7 +112,7 @@ void convert_tinyxml_to_rapidxml(TiXmlNode *src, xml_node<char> *dest, xml_docum
         default:
             throw runtime_error("unknown node produced by tinyxml");
         }
-        
+
         // If child was created, append it
         if (dest_child)
             dest->append_node(dest_child);
@@ -134,7 +134,7 @@ two_xmls *create_two_xmls(const string &filename, bool tinyxml_fails)
 
     two_xmls *result = new two_xmls;
     result->tinyxml_fails = tinyxml_fails;
-    
+
     // Create TinyXML version
     if (!tinyxml_fails)
     {
@@ -144,7 +144,7 @@ two_xmls *create_two_xmls(const string &filename, bool tinyxml_fails)
         stream.unsetf(ios::skipws);
         stream.seekg(0, ios::end);
         size_t size = stream.tellg();
-        stream.seekg(0);   
+        stream.seekg(0);
         vector<char> data(size + 1);
         stream.read(&data.front(), static_cast<streamsize>(size));
         result->ti_doc.Parse(&data.front());
@@ -159,7 +159,7 @@ two_xmls *create_two_xmls(const string &filename, bool tinyxml_fails)
         stream.unsetf(ios::skipws);
         stream.seekg(0, ios::end);
         size_t size = stream.tellg();
-        stream.seekg(0);   
+        stream.seekg(0);
         result->data.resize(size + 1);
         char *data = &result->data.front();
         stream.read(data, static_cast<streamsize>(size));
@@ -172,7 +172,7 @@ two_xmls *create_two_xmls(const string &filename, bool tinyxml_fails)
 
 bool compare_attributes(xml_attribute<char> *a1, xml_attribute<char> *a2, string &desc)
 {
-    
+
     // Compare names
     const char *name1 = a1->name();
     const char *name2 = a2->name();
@@ -181,7 +181,7 @@ bool compare_attributes(xml_attribute<char> *a1, xml_attribute<char> *a2, string
         desc = desc + "." + name1;
         return false;
     }
-    
+
     // Compare values
     const char *value1 = a1->value();
     const char *value2 = a2->value();
@@ -196,7 +196,7 @@ bool compare_attributes(xml_attribute<char> *a1, xml_attribute<char> *a2, string
 
 bool compare_nodes(xml_node<char> *n1, xml_node<char> *n2, string &desc)
 {
-    
+
     // Compare names
     const char *name1 = n1->name();
     const char *name2 = n2->name();
@@ -205,7 +205,7 @@ bool compare_nodes(xml_node<char> *n1, xml_node<char> *n2, string &desc)
         desc = desc + "." + name1;
         return false;
     }
-    
+
     // Compare values
     const char *value1 = n1->value();
     const char *value2 = n2->value();
@@ -217,7 +217,7 @@ bool compare_nodes(xml_node<char> *n1, xml_node<char> *n2, string &desc)
 
     // Compare children
     {
-        xml_node<char> *ch1 = n1->first_node(), 
+        xml_node<char> *ch1 = n1->first_node(),
                        *ch2 = n2->first_node();
         for (; ch1 && ch2; ch1 = ch1->next_sibling(), ch2 = ch2->next_sibling())
         {
@@ -236,7 +236,7 @@ bool compare_nodes(xml_node<char> *n1, xml_node<char> *n2, string &desc)
 
     // Compare attributes
     {
-        xml_attribute<char> *a1 = n1->first_attribute(), 
+        xml_attribute<char> *a1 = n1->first_attribute(),
                             *a2 = n2->first_attribute();
         for (; a1 && a2; a1 = a1->next_attribute(), a2 = a2->next_attribute())
         {
@@ -277,7 +277,7 @@ void test_xml_file(const string &filename, bool tinyxml_fails)
 
 int main()
 {
-   
+
     try
     {
         // Load file list

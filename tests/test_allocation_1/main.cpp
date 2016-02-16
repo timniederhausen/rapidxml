@@ -31,13 +31,13 @@ void test_small_dynamic()
     // Parse multiple times
     for (int i = 0; i < 100; ++i)
         doc.parse<parse_non_destructive>(f.data());
-    
+
     // Verify no memory corruption
     CHECK(strcmp(magic1, MAGIC) == 0);
     CHECK(strcmp(magic2, MAGIC) == 0);
 
     doc.clear();
-    
+
     // Verify no memory corruption
     CHECK(strcmp(magic1, MAGIC) == 0);
     CHECK(strcmp(magic2, MAGIC) == 0);

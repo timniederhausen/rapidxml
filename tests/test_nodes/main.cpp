@@ -168,7 +168,7 @@ void test_cdata_node()
     xml_node<char> *element = doc.first_node();
     REQUIRE(element);
     xml_node<char> *cdata = element->first_node();
-    
+
     if (Flags & parse_no_data_nodes)
     {
         CHECK(cdata == 0);
@@ -227,7 +227,7 @@ void test_comment_node()
 
     xml_node<char> *element = doc.first_node();
     REQUIRE(element);
-    
+
     if (!(Flags & parse_comment_nodes))
     {
         REQUIRE(element->first_node() == 0);

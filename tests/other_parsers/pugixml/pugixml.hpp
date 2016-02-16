@@ -107,7 +107,7 @@ namespace pugi
 	 * will have 3 children when parse_ws_pcdata is set (child with type node_pcdata and value=" ",
 	 * child with type node_element and name "a", and another child with type node_pcdata and
 	 * value=" "), and only 1 child when parse_ws_pcdata is not set.
-	 * 
+	 *
 	 * This flag is off by default.
 	 */
 	const unsigned int parse_ws_pcdata			= 0x0008;
@@ -116,7 +116,7 @@ namespace pugi
 	 * This flag determines if character and entity references are to be expanded during the parsing
 	 * process. Character references are &amp;#...; or &amp;#x...; (... is Unicode numeric representation of
      * character in either decimal (&amp;#...;) or hexadecimal (&amp;#x...;) form), entity references are &amp;...;
-     * Note that as pugixml does not handle DTD, the only allowed entities are predefined ones - 
+     * Note that as pugixml does not handle DTD, the only allowed entities are predefined ones -
      * &amp;lt;, &amp;gt;, &amp;amp;, &amp;apos; and &amp;quot;. If character/entity reference can not be expanded, it is
      * leaved as is, so you can do additional processing later.
      * Reference expansion is performed in attribute values and PCDATA content.
@@ -133,14 +133,14 @@ namespace pugi
 	 * This flag is on by default.
 	 */
 	const unsigned int parse_eol				= 0x0020;
-	
+
  	/**
  	 * This flag determines if attribute value normalization should be performed for all attributes,
  	 * assuming that their type is not CDATA. This means, that:
  	 * 1. Whitespace characters (new line, tab and space) are replaced with space (' ')
  	 * 2. Afterwards sequences of spaces are replaced with a single space
  	 * 3. Leading/trailing whitespace characters are trimmed
- 	 * 
+ 	 *
  	 * This flag is off by default.
  	 */
  	const unsigned int parse_wnorm_attribute	= 0x0040;
@@ -151,11 +151,11 @@ namespace pugi
  	 * space) are replaced with space (' '). Note, that the actions performed while this flag is on
  	 * are also performed if parse_wnorm_attribute is on, so this flag has no effect if
  	 * parse_wnorm_attribute flag is set.
- 	 * 
+ 	 *
  	 * This flag is on by default.
  	 */
  	const unsigned int parse_wconv_attribute	= 0x0080;
-	
+
 	/**
      * This is the default set of flags. It includes parsing CDATA sections (comments/PIs are not
      * parsed), performing character and entity reference expansion, replacing whitespace characters
@@ -165,7 +165,7 @@ namespace pugi
 	const unsigned int parse_default			= parse_cdata | parse_escapes | parse_wconv_attribute | parse_eol;
 
 	// Formatting flags
-	
+
 	/**
 	 * Indent the nodes that are written to output stream with as many indentation strings as deep
 	 * the node is in DOM tree.
@@ -173,7 +173,7 @@ namespace pugi
 	 * This flag is on by default.
 	 */
 	const unsigned int format_indent	= 0x01;
-	
+
 	/**
 	 * This flag determines how the non-printable symbols are written to output stream - they are
 	 * either considered UTF-8 and are written as UTF-8 character, escaped with &#...;, or they are
@@ -182,14 +182,14 @@ namespace pugi
 	 * This flag is on by default.
 	 */
 	const unsigned int format_utf8		= 0x02;
-	
+
 	/**
 	 * This flag determines if UTF-8 BOM is to be written to output stream.
 	 *
 	 * This flag is off by default.
 	 */
 	const unsigned int format_write_bom	= 0x04;
-	
+
 	/**
 	 * If this flag is on, no indentation is performed and no line breaks are written to output file.
 	 * This means that the data is written to output stream as is.
@@ -197,13 +197,13 @@ namespace pugi
 	 * This flag is off by default.
 	 */
 	const unsigned int format_raw		= 0x08;
-	
+
 	/**
 	 * This is the default set of formatting flags. It includes indenting nodes depending on their
 	 * depth in DOM tree and considering input data to be UTF-8.
 	 */
 	const unsigned int format_default	= format_indent | format_utf8;
-		
+
 	// Forward declarations
 	struct xml_attribute_struct;
 	struct xml_node_struct;
@@ -214,7 +214,7 @@ namespace pugi
 	class xml_attribute_iterator;
 
 	class xml_tree_walker;
-	
+
 	class xml_node;
 
 	#ifndef PUGIXML_NO_XPATH
@@ -222,7 +222,7 @@ namespace pugi
 	class xpath_node_set;
 	class xpath_ast_node;
 	class xpath_allocator;
-	
+
 	/**
 	 * A class that holds compiled XPath query and allows to evaluate query result
 	 */
@@ -251,7 +251,7 @@ namespace pugi
 		 * Dtor
 		 */
 		~xpath_query();
-		
+
 		/**
 		 * Evaluate expression as boolean value for the context node \a n.
 		 * If expression does not directly evaluate to boolean, the expression result is converted
@@ -262,7 +262,7 @@ namespace pugi
 		 * \return evaluation result
 		 */
 		bool evaluate_boolean(const xml_node& n);
-		
+
 		/**
 		 * Evaluate expression as double value for the context node \a n.
 		 * If expression does not directly evaluate to double, the expression result is converted
@@ -273,7 +273,7 @@ namespace pugi
 		 * \return evaluation result
 		 */
 		double evaluate_number(const xml_node& n);
-		
+
 		/**
 		 * Evaluate expression as string value for the context node \a n.
 		 * If expression does not directly evaluate to string, the expression result is converted
@@ -284,7 +284,7 @@ namespace pugi
 		 * \return evaluation result
 		 */
 		std::string evaluate_string(const xml_node& n);
-		
+
 		/**
 		 * Evaluate expression as node set for the context node \a n.
 		 * If expression does not directly evaluate to node set, function returns empty node set.
@@ -296,7 +296,7 @@ namespace pugi
 		xpath_node_set evaluate_node_set(const xml_node& n);
 	};
 	#endif
-	
+
 	/**
 	 * A light-weight wrapper for manipulating attributes in DOM tree.
 	 * Note: xml_attribute does not allocate any memory for the attribute it wraps; it only wraps a
@@ -309,7 +309,7 @@ namespace pugi
 
 	private:
 		xml_attribute_struct* _attr;
-	
+
     	/// \internal Safe bool type
     	typedef xml_attribute_struct* xml_attribute::*unspecified_bool_type;
 
@@ -321,7 +321,7 @@ namespace pugi
 		 * Default ctor. Constructs an empty attribute.
 		 */
 		xml_attribute();
-		
+
 	public:
     	/**
     	 * Safe bool conversion.
@@ -339,7 +339,7 @@ namespace pugi
 		 * \return comparison result
 		 */
 		bool operator==(const xml_attribute& r) const;
-		
+
 		/**
 		 * Compare wrapped pointer to the attribute to the pointer that is wrapped by \a r.
 		 *
@@ -347,7 +347,7 @@ namespace pugi
 		 * \return comparison result
 		 */
 		bool operator!=(const xml_attribute& r) const;
-		
+
 		/**
 		 * Compare wrapped pointer to the attribute to the pointer that is wrapped by \a r.
 		 *
@@ -355,7 +355,7 @@ namespace pugi
 		 * \return comparison result
 		 */
 		bool operator<(const xml_attribute& r) const;
-		
+
 		/**
 		 * Compare wrapped pointer to the attribute to the pointer that is wrapped by \a r.
 		 *
@@ -363,7 +363,7 @@ namespace pugi
 		 * \return comparison result
 		 */
 		bool operator>(const xml_attribute& r) const;
-		
+
 		/**
 		 * Compare wrapped pointer to the attribute to the pointer that is wrapped by \a r.
 		 *
@@ -371,7 +371,7 @@ namespace pugi
 		 * \return comparison result
 		 */
 		bool operator<=(const xml_attribute& r) const;
-		
+
 		/**
 		 * Compare wrapped pointer to the attribute to the pointer that is wrapped by \a r.
 		 *
@@ -408,7 +408,7 @@ namespace pugi
 		 * \return attribute value as double, or 0.0 if conversion did not succeed or attribute is empty
 		 */
 		double as_double() const;
-	
+
 		/**
 		 * Cast attribute value as float.
 		 *
@@ -435,7 +435,7 @@ namespace pugi
          * \return self
          */
 		xml_attribute& operator=(const char* rhs);
-	
+
 		/**
          * Set attribute value to \a rhs.
          *
@@ -443,7 +443,7 @@ namespace pugi
          * \return self
          */
 		xml_attribute& operator=(int rhs);
-	
+
 		/**
          * Set attribute value to \a rhs.
          *
@@ -451,7 +451,7 @@ namespace pugi
          * \return self
          */
 		xml_attribute& operator=(double rhs);
-		
+
 		/**
          * Set attribute value to either 'true' or 'false' (depends on whether \a rhs is true or false).
          *
@@ -467,7 +467,7 @@ namespace pugi
 		 * \return success flag (call fails if attribute is empty or there is not enough memory)
 		 */
 		bool set_name(const char* rhs);
-		
+
 		/**
 		 * Set attribute value to \a rhs.
 		 *
@@ -545,7 +545,7 @@ namespace pugi
 
 		// Borland C++ workaround
 		bool operator!() const;
-	
+
 		/**
 		 * Compare wrapped pointer to the attribute to the pointer that is wrapped by \a r.
 		 *
@@ -585,7 +585,7 @@ namespace pugi
 		 * \return comparison result
 		 */
 		bool operator<=(const xml_node& r) const;
-		
+
 		/**
 		 * Compare wrapped pointer to the attribute to the pointer that is wrapped by \a r.
 		 *
@@ -613,21 +613,21 @@ namespace pugi
 		 * \return iterator that points to the first child node, or past-the-end iterator if node is empty or has no children
 		 */
 		iterator begin() const;
-	
+
 		/**
 		 * Access the end iterator for this node's collection of child nodes.
 		 *
 		 * \return past-the-end iterator for child list
 		 */
 		iterator end() const;
-	
+
 		/**
 		 * Access the begin iterator for this node's collection of attributes.
 		 *
 		 * \return iterator that points to the first attribute, or past-the-end iterator if node is empty or has no attributes
 		 */
 		attribute_iterator attributes_begin() const;
-	
+
 		/**
 		 * Access the end iterator for this node's collection of attributes.
 		 *
@@ -664,7 +664,7 @@ namespace pugi
 		 * \return node value, if any; "" otherwise
 		 */
 		const char* value() const;
-	
+
 		/**
 		 * Get child with the specified name
 		 *
@@ -782,7 +782,7 @@ namespace pugi
 		 */
 		const char* child_value_w(const char* name) const;
 
-	public:	
+	public:
 		/**
 		 * Set node name to \a rhs (for PI/element nodes). \see name
 		 *
@@ -790,7 +790,7 @@ namespace pugi
 		 * \return success flag (call fails if node is of the wrong type or there is not enough memory)
 		 */
 		bool set_name(const char* rhs);
-		
+
 		/**
 		 * Set node value to \a rhs (for PI/PCDATA/CDATA/comment nodes). \see value
 		 *
@@ -923,7 +923,7 @@ namespace pugi
 		 * \return last child, if any; empty node otherwise
 		 */
         xml_node last_child() const;
-		
+
 		/**
 		 * Find attribute using predicate
 		 *
@@ -960,7 +960,7 @@ namespace pugi
 
 		/**
 		 * Search for a node by path.
-		 * \param path - path string; e.g. './foo/bar' (relative to node), '/foo/bar' (relative 
+		 * \param path - path string; e.g. './foo/bar' (relative to node), '/foo/bar' (relative
 		 * to root), '../foo/bar'.
 		 * \param delimiter - delimiter character to use while tokenizing path
 		 * \return matching node, if any; empty node otherwise
@@ -977,11 +977,11 @@ namespace pugi
 		 * \return traversal result
 		 */
 		bool traverse(xml_tree_walker& walker);
-	
+
 	#ifndef PUGIXML_NO_XPATH
 		/**
 		 * Select single node by evaluating XPath query
-		 * 
+		 *
 		 * \param query - query string
 		 * \return first node from the resulting node set by document order, or empty node if none found
 		 */
@@ -1011,7 +1011,7 @@ namespace pugi
 		 */
 		xpath_node_set select_nodes(xpath_query& query) const;
 	#endif
-		
+
 		/// \internal Document order or 0 if not set
 		unsigned int document_order() const;
 
@@ -1080,7 +1080,7 @@ namespace pugi
 		 * \return comparison result
 		 */
 		bool operator==(const xml_node_iterator& rhs) const;
-		
+
 		/**
 		 * Check if this iterator is not equal to \a rhs
 		 *
@@ -1116,14 +1116,14 @@ namespace pugi
 		 * \return old value
 		 */
 		xml_node_iterator operator++(int);
-		
+
 		/**
 		 * Pre-decrement operator
 		 *
 		 * \return self
 		 */
 		const xml_node_iterator& operator--();
-		
+
 		/**
 		 * Post-decrement operator
 		 *
@@ -1178,7 +1178,7 @@ namespace pugi
 		 * \return comparison result
 		 */
 		bool operator==(const xml_attribute_iterator& rhs) const;
-		
+
 		/**
 		 * Check if this iterator is not equal to \a rhs
 		 *
@@ -1214,14 +1214,14 @@ namespace pugi
 		 * \return old value
 		 */
 		xml_attribute_iterator operator++(int);
-		
+
 		/**
 		 * Pre-decrement operator
 		 *
 		 * \return self
 		 */
 		const xml_attribute_iterator& operator--();
-		
+
 		/**
 		 * Post-decrement operator
 		 *
@@ -1240,15 +1240,15 @@ namespace pugi
 
 	private:
 		int _depth;
-	
+
 	protected:
 		/**
 		 * Get node depth
-		 * 
+		 *
 		 * \return node depth
 		 */
 		int depth() const;
-	
+
 	public:
 		/**
 		 * Default ctor
@@ -1310,7 +1310,7 @@ namespace pugi
 		char*				_buffer;
 
 		xml_memory_block	_memory;
-		
+
 		xml_document(const xml_document&);
 		const xml_document& operator=(const xml_document&);
 
@@ -1369,7 +1369,7 @@ namespace pugi
 		 * \return success flag
 		 */
 		bool parse(char* xmlstr, unsigned int options = parse_default);
-		
+
 		/**
 		 * Parse the given XML string in-situ (gains ownership).
 		 * The string is modified; document gains ownership over the string, so you don't have to worry
@@ -1381,7 +1381,7 @@ namespace pugi
 		 * \return success flag
 		 */
 		bool parse(const transfer_ownership_tag&, char* xmlstr, unsigned int options = parse_default);
-		
+
 #ifndef PUGIXML_NO_STL
 		/**
 		 * Save XML to file
@@ -1425,10 +1425,10 @@ namespace pugi
 		 */
 		virtual const char* what() const throw();
 	};
-	
+
 	/**
 	 * XPath node class.
-	 * 
+	 *
 	 * XPath defines node to be either xml_node or xml_attribute in pugixml terminology, so xpath_node
 	 * is either xml_node or xml_attribute.
 	 */
@@ -1437,7 +1437,7 @@ namespace pugi
 	private:
 		xml_node m_node;
 		xml_attribute m_attribute;
-	
+
     	/// \internal Safe bool type
     	typedef xml_node xpath_node::*unspecified_bool_type;
 
@@ -1446,7 +1446,7 @@ namespace pugi
 		 * Construct empty XPath node
 		 */
 		xpath_node();
-		
+
 		/**
 		 * Construct XPath node from XML node
 		 *
@@ -1468,14 +1468,14 @@ namespace pugi
 		 * \return contained XML node, empty node otherwise
 		 */
 		xml_node node() const;
-		
+
 		/**
 		 * Get XML attribute, if any
 		 *
 		 * \return contained XML attribute, if any, empty attribute otherwise
 		 */
 		xml_attribute attribute() const;
-		
+
 		/**
 		 * Get parent of contained XML attribute, if any
 		 *
@@ -1488,7 +1488,7 @@ namespace pugi
     	 * Allows xpath_node to be used in a context where boolean variable is expected, such as 'if (node)'.
     	 */
 		operator unspecified_bool_type() const;
-		
+
 		/**
 		 * Compares two XPath nodes
 		 *
@@ -1496,7 +1496,7 @@ namespace pugi
 		 * \return comparison result
 		 */
 		bool operator==(const xpath_node& n) const;
-		
+
 		/**
 		 * Compares two XPath nodes
 		 *
@@ -1512,7 +1512,7 @@ namespace pugi
 	class xpath_node_set
 	{
 		friend class xpath_ast_node;
-		
+
 	public:
 		/// Collection type
 		enum type_t
@@ -1521,30 +1521,30 @@ namespace pugi
 			type_sorted,			///< Sorted by document order (ascending)
 			type_sorted_reverse		///< Sorted by document order (descending)
 		};
-		
+
 		/// Constant iterator type
 		typedef const xpath_node* const_iterator;
-	
+
 	private:
 		type_t m_type;
-		
+
 		xpath_node m_storage;
-		
+
 		xpath_node* m_begin;
 		xpath_node* m_end;
 		xpath_node* m_eos;
-		
+
 		bool m_using_storage;
-		
+
 		typedef xpath_node* iterator;
 
 		iterator mut_begin();
 		iterator mut_end();
-		
+
 		void push_back(const xpath_node& n);
-		
+
 		template <typename Iterator> void append(Iterator begin, Iterator end);
-		
+
 		void truncate(iterator it);
 
 		void remove_duplicates();
@@ -1560,7 +1560,7 @@ namespace pugi
          * Dtor
          */
 		~xpath_node_set();
-		
+
 		/**
 		 * Copy ctor
 		 *
@@ -1575,49 +1575,49 @@ namespace pugi
 		 * \return self
 		 */
 		xpath_node_set& operator=(const xpath_node_set& ns);
-		
+
 		/**
 		 * Get collection type
 		 *
 		 * \return collection type
 		 */
 		type_t type() const;
-		
+
 		/**
 		 * Get collection size
 		 *
 		 * \return collection size
 		 */
 		size_t size() const;
-		
+
 		/**
 		 * Get begin constant iterator for collection
 		 *
 		 * \return begin constant iterator
 		 */
 		const_iterator begin() const;
-		
+
 		/**
 		 * Get end iterator for collection
 		 *
 		 * \return end iterator
 		 */
 		const_iterator end() const;
-		
+
 		/**
 		 * Sort the collection in ascending/descending order by document order
 		 *
 		 * \param reverse - whether to sort in ascending (false) or descending (true) order
 		 */
 		void sort(bool reverse = false);
-		
+
 		/**
 		 * Get first node in the collection by document order
 		 *
 		 * \return first node by document order
 		 */
 		xpath_node first() const;
-		
+
 		/**
 		 * Return true if collection is empty
 		 *
@@ -1635,7 +1635,7 @@ namespace pugi
 	 * \return output UTF8 string
 	 */
 	std::string as_utf8(const wchar_t* str);
-	
+
 	/**
 	 * Convert utf8 to utf16
 	 *
@@ -1658,7 +1658,7 @@ namespace pugi
 	template <typename OutputIterator> void xml_node::all_elements_by_name(const char* name, OutputIterator it) const
 	{
 		if (empty()) return;
-		
+
 		for (xml_node node = first_child(); node; node = node.next_sibling())
 		{
 			if (node.type() == node_element)
@@ -1668,7 +1668,7 @@ namespace pugi
 					*it = node;
 					++it;
 				}
-			
+
 				if (node.first_child()) node.all_elements_by_name(name, it);
 			}
 		}
@@ -1677,7 +1677,7 @@ namespace pugi
 	template <typename OutputIterator> void xml_node::all_elements_by_name_w(const char* name, OutputIterator it) const
 	{
 		if (empty()) return;
-		
+
 		for (xml_node node = first_child(); node; node = node.next_sibling())
 		{
 			if (node.type() == node_element)
@@ -1687,19 +1687,19 @@ namespace pugi
 					*it = node;
 					++it;
 				}
-					
+
 				if (node.first_child()) node.all_elements_by_name_w(name, it);
 			}
 		}
 	}
-	
+
 	template <typename Predicate> inline xml_attribute xml_node::find_attribute(Predicate pred) const
 	{
 		if (!empty())
 			for (xml_attribute attrib = first_attribute(); attrib; attrib = attrib.next_attribute())
 				if (pred(attrib))
 					return attrib;
-		
+
 		return xml_attribute();
 	}
 
@@ -1720,7 +1720,7 @@ namespace pugi
 			{
 				if (pred(node))
 					return node;
-				
+
 				if (node.first_child())
 				{
 					xml_node found = node.find_node(pred);

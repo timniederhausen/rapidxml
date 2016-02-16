@@ -20,7 +20,7 @@ void test_xml_file(const string &filename)
     stream.unsetf(ios::skipws);
     stream.seekg(0, ios::end);
     size_t size = stream.tellg();
-    stream.seekg(0);   
+    stream.seekg(0);
     vector<char> data(size + 1);
     stream.read(&data.front(), static_cast<streamsize>(size));
 
@@ -41,7 +41,7 @@ void test_xml_file(const string &filename)
 
 int main()
 {
-   
+
     try
     {
         // Load file list

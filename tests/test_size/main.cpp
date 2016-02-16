@@ -5,8 +5,8 @@ int error;
 
 namespace rapidxml
 {
-    void parse_error_handler(const char *, void *) 
-    { 
+    void parse_error_handler(const char *, void *)
+    {
         exit(0);
     }
 }

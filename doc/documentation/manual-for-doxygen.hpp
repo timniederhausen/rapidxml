@@ -11,25 +11,25 @@
 //!
 //! \section what_is_rapidxml What is RapidXml?
 //!
-//! <a href="http://rapidxml.sourceforge.net">RapidXml</a> is an attempt to create the fastest XML DOM parser possible, while retaining useability, 
-//! portability and reasonable W3C compatibility. 
+//! <a href="http://rapidxml.sourceforge.net">RapidXml</a> is an attempt to create the fastest XML DOM parser possible, while retaining useability,
+//! portability and reasonable W3C compatibility.
 //! It is an in-situ parser written in C++, with parsing speed approaching that of <c>strlen()</c> function executed on the same data.
 //! <br><br>
-//! Entire parser is contained in a single header file, so no building or linking is neccesary. 
+//! Entire parser is contained in a single header file, so no building or linking is neccesary.
 //! To use it you just need to copy <c>%rapidxml.hpp</c> file to a convenient place (such as your project directory), and include it where needed.
 //! You may also want to use printing functions contained in header <c>%rapidxml_print.hpp</c>.
 //!
 //! \subsection dependencies_and_compatibility Dependencies And Compatibility
 //!
-//! RapidXml has <i>no dependencies</i> other than a very small subset of standard C++ library 
-//! (<c>&lt;cassert&gt;</c>, <c>&lt;cstdlib&gt;</c>, <c>&lt;new&gt;</c> 
+//! RapidXml has <i>no dependencies</i> other than a very small subset of standard C++ library
+//! (<c>&lt;cassert&gt;</c>, <c>&lt;cstdlib&gt;</c>, <c>&lt;new&gt;</c>
 //! and <c>&lt;exception&gt;</c>, unless exceptions are disabled).
 //! It should compile on any reasonably conformant compiler, and was tested on Visual C++ 2003, Visual C++ 2005, Visual C++ 2008, gcc 3, gcc 4, and Comeau 4.3.3.
 //! Care was taken that no warnings are produced on these compilers, even with highest warning levels enabled.
 //!
 //! \subsection character_types_and_encodings Character Types And Encodings
 //!
-//! RapidXml is character type agnostic, and can work both with narrow and wide characters. 
+//! RapidXml is character type agnostic, and can work both with narrow and wide characters.
 //! Current version does not fully support UTF-16 or UTF-32, so use of wide characters is somewhat incapacitated.
 //! However, it should succesfully parse <c>wchar_t</c> strings containing UTF-16 or UTF-32 if endianness of the data matches that of the machine.
 //! UTF-8 is fully supported, including all numeric character references, which are expanded into appropriate UTF-8 byte sequences (unless you enable parse_no_utf8 flag).
@@ -40,22 +40,22 @@
 //!
 //! \subsection error_handling Error Handling
 //!
-//! By default, RapidXml uses C++ exceptions to report errors. 
+//! By default, RapidXml uses C++ exceptions to report errors.
 //! If this behaviour is undesirable, RAPIDXML_NO_EXCEPTIONS can be defined to suppress exception code.
-//! See parse_error class and parse_error_handler() function for more information. 
+//! See parse_error class and parse_error_handler() function for more information.
 //!
 //! \subsection memory_allocation Memory Allocation
 //!
 //! RapidXml uses a special memory pool object to allocate nodes and attributes, because direct allocation using <c>new</c> operator would be far too slow.
-//! Underlying memory allocations performed by the pool can be customized by use of memory_pool::set_allocator() function. 
+//! Underlying memory allocations performed by the pool can be customized by use of memory_pool::set_allocator() function.
 //! See class memory_pool for more information.
 //!
 //! \subsection w3c_compliance W3C Compliance
 //!
-//! RapidXml is not a W3C compliant parser, primarily because it ignores DOCTYPE declarations. 
+//! RapidXml is not a W3C compliant parser, primarily because it ignores DOCTYPE declarations.
 //! There is a number of other, minor incompatibilities as well.
-//! Still, it can successfully parse and produce complete trees of all valid XML files in W3C conformance suite 
-//! (over 1000 files specially designed to find flaws in XML processors). 
+//! Still, it can successfully parse and produce complete trees of all valid XML files in W3C conformance suite
+//! (over 1000 files specially designed to find flaws in XML processors).
 //! In destructive mode it performs whitespace normalization and character entity substitution for a small set of built-in entities.
 //!
 //! \subsection api_design API Design
@@ -66,13 +66,13 @@
 //!
 //! \subsection reliability Reliability
 //!
-//! RapidXml is very robust and comes with a large harness of unit tests. 
-//! Special care has been taken to ensure stability of the parser no matter what source text is thrown at it. 
-//! One of the unit tests produces 100,000 randomly corrupted variants of XML document, 
+//! RapidXml is very robust and comes with a large harness of unit tests.
+//! Special care has been taken to ensure stability of the parser no matter what source text is thrown at it.
+//! One of the unit tests produces 100,000 randomly corrupted variants of XML document,
 //! which (when uncorrupted) contains all constructs recognized by RapidXml.
 //! RapidXml passes this test when it correctly recognizes that errors have been introduced, and does not crash or loop indefinitely.
 //! <br><br>
-//! Another unit test puts RapidXml head-to-head with another, well estabilished XML parser, 
+//! Another unit test puts RapidXml head-to-head with another, well estabilished XML parser,
 //! and verifies that their outputs match across a wide variety of small and large documents.
 //! <br><br>
 //! Yet another test feeds RapidXml with over 1000 test files from W3C compliance suite, and verifies that correct results are obtained.
@@ -80,11 +80,11 @@
 //!
 //! \subsection acknowledgements Acknowledgements
 //!
-//! I would like to thank Arseny Kapoulkine for his work on <a href="http://code.google.com/p/pugixml">pugixml</a>, 
+//! I would like to thank Arseny Kapoulkine for his work on <a href="http://code.google.com/p/pugixml">pugixml</a>,
 //! which was an inspiration for this project.
 //! Additional thanks go to Kristen Wegner for creating <a href="http://www.codeproject.com/soap/pugxml.asp">pugxml</a>,
 //! from which pugixml was derived.
-//! Janusz Wohlfeil kindly ran RapidXml speed tests on hardware that I did not have access to, 
+//! Janusz Wohlfeil kindly ran RapidXml speed tests on hardware that I did not have access to,
 //! allowing me to expand performance comparison table.
 //!
 //! \section two_minute_tutorial Two Minute Tutorial
@@ -98,11 +98,11 @@ xml_document<> doc;    // character type defaults to char
 doc.parse<0>(text);    // 0 means default parse flags
 \endverbatim
 //! <c>doc</c> object is now a root of DOM tree containing representation of the parsed XML.
-//! Because all RapidXml interface is contained inside namespace <c>rapidxml</c>, 
+//! Because all RapidXml interface is contained inside namespace <c>rapidxml</c>,
 //! users must either bring contents of this namespace into scope, or fully qualify all the names.
-//! Class xml_document represents a root of the DOM hierarchy. 
+//! Class xml_document represents a root of the DOM hierarchy.
 //! By means of public inheritance, it is also an xml_node and a memory_pool.
-//! Template parameter of xml_document::parse() function is used to specify parsing flags, 
+//! Template parameter of xml_document::parse() function is used to specify parsing flags,
 //! with which you can fine-tune behaviour of the parser.
 //! Note that flags must be a compile-time constant.
 //!
@@ -133,7 +133,7 @@ xml_attribute<> *attr = doc.allocate_attribute("href", "google.com");
 node->append_attribute(attr);
 \endverbatim
 //! One quirk is that nodes and attributes <i>do not own</i> the text of their names and values.
-//! This is because normally they only store pointers to the source text. 
+//! This is because normally they only store pointers to the source text.
 //! So, when assigning a new name or value to the node, care must be taken to ensure proper lifetime of the string.
 //! The easiest way to achieve it is to allocate the string from the xml_document memory pool.
 //! In the above example this is not necessary, because we are only assigning character constants.
@@ -155,7 +155,7 @@ xml_document<> doc;    // character type defaults to char
 // ... some code to fill the document
 
 // Print to stream using operator <<
-std::cout << doc;   
+std::cout << doc;
 
 // Print to stream using print function, specifying printing flags
 print(std::cout, doc, 0);   // 0 means default printing flags
@@ -172,37 +172,37 @@ char *end = print(buffer, doc, 0);      // end contains pointer to character aft
 //! \section differences Differences From Regular XML Parsers
 //!
 //! RapidXml is an <i>in-situ parser</i>, which allows it to achieve very high parsing speed.
-//! In-situ means that parser does not make copies of strings. 
+//! In-situ means that parser does not make copies of strings.
 //! Instead, it places pointers to the <i>source text</i> in the DOM hierarchy.
 //!
 //! \subsection lifetime_of_source_text Lifetime Of Source Text
 //!
 //! In-situ parsing requires that source text lives at least as long as the document object.
 //! If source text is destroyed, names and values of nodes in DOM tree will become destroyed as well.
-//! Additionally, whitespace processing, character entity translation, 
+//! Additionally, whitespace processing, character entity translation,
 //! and zero-termination of strings require that source text be modified during parsing
-//! (but see non-destructive mode). 
-//! This makes the text useless for further processing once it was parsed by RapidXml. 
+//! (but see non-destructive mode).
+//! This makes the text useless for further processing once it was parsed by RapidXml.
 //! <br><br>
 //! In many cases however, these are not serious issues.
 //!
 //! \subsection ownership_of_strings Ownership Of Strings
-//! 
+//!
 //! Nodes and attributes produced by RapidXml do not own their name and value strings.
 //! They merely hold the pointers to them.
-//! This means you have to be careful when setting these values manually, 
+//! This means you have to be careful when setting these values manually,
 //! by using xml_base::name(const Ch *) or xml_base::value(const Ch *) functions.
 //! Care must be taken to ensure that lifetime of the string passed is at least as long as lifetime of the node/attribute.
 //! The easiest way to achieve it is to allocate the string from memory_pool owned by the document.
 //! Use memory_pool::allocate_string() function for this purpose.
-//! 
+//!
 //! \subsection destructive_non_destructive Destructive Vs Non-Destructive Mode
-//! 
+//!
 //! By default, the parser modifies source text during the parsing process.
-//! This is required to achieve character entity translation, 
+//! This is required to achieve character entity translation,
 //! whitespace normalization, and zero-termination of strings.
 //! <br><br>
-//! In some cases this behaviour may be undesirable, for example if source text resides in read only memory, 
+//! In some cases this behaviour may be undesirable, for example if source text resides in read only memory,
 //! or is mapped to memory directly from file.
 //! By using appropriate parser flags (parse_non_destructive), source text modifications can be disabled.
 //! However, because RapidXml does in-situ parsing, it obviously has the following side-effects:
@@ -213,23 +213,23 @@ char *end = print(buffer, doc, 0);      // end contains pointer to character aft
 //! \section performance Performance
 //!
 //! RapidXml achieves its speed through use of several techniques:
-//! - In-situ parsing. 
+//! - In-situ parsing.
 //! When building DOM tree, RapidXml does not make copies of string data, such as node names and values.
 //! Instead, it stores pointers to interior of the source text.
 //! - Use of template metaprogramming techniques.
-//! This allows it to move much of the work to compile time. 
+//! This allows it to move much of the work to compile time.
 //! Through magic of the templates, C++ compiler generates a separate copy of parsing code for any combination of parser flags you use.
 //! In each copy, all possible decisions are made at compile time and all unused code is omitted.
 //! - Extensive use of lookup tables for parsing.
 //! - Hand-tuned C++ with profiling done on several most popular CPUs.
-//! 
+//!
 //! This results in a very small and fast code: a parser which is custom tailored to exact needs with each invocation.
 //!
 //! \subsection performance_charts Comparison With Other Parsers
 //!
 //! The table below compares speed of RapidXml to some other parsers, and to <c>strlen()</c> function executed on the same data.
 //! On a modern CPU (as of 2007), you can expect parsing throughput to be close to 1 GB/s.
-//! As a rule of thumb, parsing speed is about 50-100x faster than Xerces DOM, 
+//! As a rule of thumb, parsing speed is about 50-100x faster than Xerces DOM,
 //! 30-60x faster than TinyXml, 3-12x faster than pugxml, and about 5% - 30% faster than pugixml,
 //! the fastest XML parser I know of.
 //!
@@ -328,5 +328,5 @@ char *end = print(buffer, doc, 0);      // end contains pointer to character aft
 //! <i>(*) All results are in CPU cycles per character of source text</i>
 //!
 //! \section reference Reference
-//! 
+//!
 //! This section lists all classes, functions, constants etc. and describes them in detail.

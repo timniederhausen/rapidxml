@@ -23,7 +23,7 @@ void test_progressive_truncations()
     stream.unsetf(ios::skipws);
     stream.seekg(0, ios::end);
     size_t size = stream.tellg();
-    stream.seekg(0);   
+    stream.seekg(0);
     vector<char> original(size + 1);
     stream.read(&original.front(), static_cast<streamsize>(size));
 
@@ -60,7 +60,7 @@ void test_random_mutations()
 
     // Initialize random generator
     srand(77);
-    
+
     // Load file
     string filename("../xml_files/simple_all.xml");
     ifstream stream(filename.c_str(), ios::binary);
@@ -69,7 +69,7 @@ void test_random_mutations()
     stream.unsetf(ios::skipws);
     stream.seekg(0, ios::end);
     size_t size = stream.tellg();
-    stream.seekg(0);   
+    stream.seekg(0);
     vector<char> original(size + 1);
     stream.read(&original.front(), static_cast<streamsize>(size));
 
@@ -80,7 +80,7 @@ void test_random_mutations()
     {
         // Make a copy of data
         vector<char> data(original);
-        
+
         // Mutate
         int num_garbage_chars = rand() % max_garbage_chars_per_mutation + 1;
         for (int j = 0; j < num_garbage_chars; ++j)
@@ -99,7 +99,7 @@ void test_random_mutations()
         }
 
     }
-    
+
     // Success
     cout << "Random Mutations succeeded, " << count << " errors in " << num_mutations << " tries\n";
 
@@ -108,7 +108,7 @@ void test_random_mutations()
 int main()
 {
     cout << "NOTE: this test will crash or loop indefinitely when it fails\n\n";
-    
+
     test_progressive_truncations<parse_fastest>();
     test_progressive_truncations<parse_non_destructive>();
     test_progressive_truncations<0>();
@@ -116,7 +116,7 @@ int main()
     test_progressive_truncations<parse_normalize_whitespace>();
     test_progressive_truncations<parse_trim_whitespace | parse_normalize_whitespace>();
     test_progressive_truncations<parse_full>();
-    
+
     test_random_mutations<parse_fastest>();
     test_random_mutations<parse_non_destructive>();
     test_random_mutations<0>();

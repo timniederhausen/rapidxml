@@ -28,7 +28,7 @@ public:
     {
         if (failed() + succeeded() > 0)
         {
-            std::cout << "\n" 
+            std::cout << "\n"
                       << (failed() ? "*** Failure (" : "*** Success (")
                       << succeeded() << "/" << failed() + succeeded() << " checks succeeded)\n";
         }

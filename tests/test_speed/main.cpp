@@ -25,8 +25,8 @@ vector<char> buffer;
 
 namespace rapidxml
 {
-    void parse_error_handler(const char *what, void *where_void) 
-    { 
+    void parse_error_handler(const char *what, void *where_void)
+    {
         // Print data around error
         char *where = reinterpret_cast<char *>(where_void);
         const char *begin = (std::max)(where - 50, &buffer.front());
@@ -62,7 +62,7 @@ namespace rapidxml
         return result;
     }
 
-#else 
+#else
     #error "This test is only supported on MSVC or gcc, under x86"
 #endif
 
@@ -87,7 +87,7 @@ struct tinyxml_parser
         doc.Parse(data, 0, TIXML_ENCODING_UTF8);
     }
 };
-    
+
 template<int Flags>
 struct pugixml_parser
 {
@@ -131,7 +131,7 @@ void test(const char *filename, const char *description)
     stream.unsetf(ios::skipws);
     stream.seekg(0, ios::end);
     size_t size = stream.tellg();
-    stream.seekg(0);   
+    stream.seekg(0);
     vector<char> data(size + 1);
     stream.read(&data.front(), static_cast<streamsize>(size));
     data[size] = '\0';
@@ -144,7 +144,7 @@ void test(const char *filename, const char *description)
     // undisturbed by context switching and other OS activity.
     // A file of 50kB at 10 cycles/char takes 500,000 cycles to parse.
     // On 2 GHz CPU this is 1/4000 of a second.
-    // During 2 seconds (taking into account restoring of the data), this file is parsed 
+    // During 2 seconds (taking into account restoring of the data), this file is parsed
     // several thousands of times.
     tick_t min = 0;
     clock_t start = std::clock();
@@ -159,7 +159,7 @@ void test(const char *filename, const char *description)
         if (min == 0 || t2 - t1 < min)
             min = t2 - t1;
     }
-    
+
     // Return minimum cycles/character
     cout <<  "        " << fixed << setprecision(1) << double(min) / size << " cycles/char " << description << "\n";
 
