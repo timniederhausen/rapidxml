@@ -6,6 +6,7 @@
 #include <fstream>
 #include <iomanip>
 #include <stdexcept>
+#include <algorithm>
 
 #define RAPIDXML_NO_EXCEPTIONS
 #include "../../rapidxml.hpp"
