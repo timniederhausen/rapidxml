@@ -4,14 +4,14 @@
 #ifndef TEST_UTILS_HPP_INCLUDED
 #define TEST_UTILS_HPP_INCLUDED
 
+#include "../rapidxml.hpp"
+
 #include <iostream>
 #include <cstdlib>
 
 class test
 {
-
 public:
-
     static int &succeeded()
     {
         static int n;
@@ -38,7 +38,6 @@ public:
         }
         return (failed() == 0) ? 0 : 1;
     }
-
 };
 
 #define CHECK(c)                                        \
@@ -59,5 +58,23 @@ public:
     }                                                                           \
     else                                                                        \
         ++test::succeeded();
+
+template<int Flags>
+std::string name(rapidxml::xml_base<char> *node)
+{
+    if (Flags & rapidxml::parse_no_string_terminators)
+        return std::string(node->name(), node->name_size());
+    else
+        return std::string(node->name());
+}
+
+template<int Flags>
+std::string value(rapidxml::xml_base<char> *node)
+{
+    if (Flags & rapidxml::parse_no_string_terminators)
+        return std::string(node->value(), node->value_size());
+    else
+        return std::string(node->value());
+}
 
 #endif

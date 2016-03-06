@@ -10,24 +10,6 @@ using namespace std;
 using namespace rapidxml;
 
 template<int Flags>
-string name(xml_base<char> *node)
-{
-    if (Flags & parse_no_string_terminators)
-        return string(node->name(), node->name() + node->name_size());
-    else
-        return string(node->name());
-}
-
-template<int Flags>
-string value(xml_base<char> *node)
-{
-    if (Flags & parse_no_string_terminators)
-        return string(node->value(), node->value() + node->value_size());
-    else
-        return string(node->value());
-}
-
-template<int Flags>
 void test_document_node()
 {
     cout << "Test document node...\n";

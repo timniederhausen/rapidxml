@@ -12,15 +12,6 @@ using namespace rapidxml;
 using namespace std;
 
 template<int Flags>
-string name(xml_base<char> *node)
-{
-    if (Flags & parse_no_string_terminators)
-        return string(node->name(), node->name() + node->name_size());
-    else
-        return string(node->name());
-}
-
-template<int Flags>
 void test_all()
 {
     file<> f("../xml_files/simple_all.xml");
