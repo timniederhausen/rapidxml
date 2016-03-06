@@ -67,6 +67,8 @@ void test_element_node()
     {
         CHECK(count_children(element) == 2);
     }
+    CHECK(count_children(element, "interior") == 1);
+    CHECK(count_children(element, "invalid") == 0);
     CHECK(count_attributes(element) == 0);
     CHECK(element->next_sibling() == 0);
     CHECK(element->previous_sibling() == 0);
