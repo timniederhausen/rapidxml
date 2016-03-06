@@ -1,4 +1,4 @@
-#include "../../rapidxml.hpp"
+#include "../test_utils.hpp"
 #include <vector>
 #include <string>
 #include <fstream>
@@ -13,22 +13,13 @@ using namespace std;
 template<int Flags>
 void test_xml_file(const string &filename)
 {
-    // Load file
-    ifstream stream(filename.c_str(), ios::binary);
-    if (!stream)
-        throw runtime_error(string("cannot open file ") + filename);
-    stream.unsetf(ios::skipws);
-    stream.seekg(0, ios::end);
-    size_t size = stream.tellg();
-    stream.seekg(0);
-    vector<char> data(size + 1);
-    stream.read(&data.front(), static_cast<streamsize>(size));
+    file<> f(filename.c_str());
 
     // Parse
     try
     {
         rapidxml::xml_document<char> doc;
-        doc.parse<Flags>(&data.front());
+        doc.parse<Flags>(f.data());
         cout << "Test " << filename << " succeeded.\n";
     }
     catch (...)

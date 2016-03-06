@@ -9,7 +9,7 @@
 #include <algorithm>
 
 #define RAPIDXML_NO_EXCEPTIONS
-#include "../../rapidxml.hpp"
+#include "../test_utils.hpp"
 #include "../other_parsers/pugixml/pugixml.hpp"
 
 #include "../other_parsers/tinyxml/tinyxml.h"
@@ -123,19 +123,10 @@ size_t strlen_parser::length;
 // Test
 
 template<class Parser>
-void test(const char *filename, const char *description)
+void test_file(const char *filename, const char *description)
 {
     // Load data
-    ifstream stream(filename, ios::binary);
-    if (!stream)
-        throw runtime_error(string("cannot open file ") + filename);
-    stream.unsetf(ios::skipws);
-    stream.seekg(0, ios::end);
-    size_t size = stream.tellg();
-    stream.seekg(0);
-    vector<char> data(size + 1);
-    stream.read(&data.front(), static_cast<streamsize>(size));
-    data[size] = '\0';
+    file<> f(filename);
 
     // Determine minimum CPU cycles it takes to parse test data
     // A very large number of mesurements is taken over several seconds.
@@ -151,7 +142,7 @@ void test(const char *filename, const char *description)
     clock_t start = std::clock();
     while (std::clock() < start + 2 * CLOCKS_PER_SEC)   // 2 seconds
     {
-        buffer = data;     // Make a copy of data (this must be done every time because parsing destroys the data)
+        buffer = f.get();     // Make a copy of data (this must be done every time because parsing destroys the data)
         Parser parser;     // Creation and destruction of parser not timed
         char *xml = &buffer.front();
         tick_t t1 = ticks();    // 1st timing
@@ -162,8 +153,7 @@ void test(const char *filename, const char *description)
     }
 
     // Return minimum cycles/character
-    cout <<  "        " << fixed << setprecision(1) << double(min) / size << " cycles/char " << description << "\n";
-
+    cout <<  "        " << fixed << setprecision(1) << double(min) / f.size() << " cycles/char " << description << "\n";
 }
 
 void test_all(const char *filename)
@@ -171,17 +161,17 @@ void test_all(const char *filename)
     using namespace rapidxml;
     printf("\nFile %s\n", filename);
     printf("    strlen:\n");
-    test<strlen_parser>(filename, "strlen() on XML data");
+    test_file<strlen_parser>(filename, "strlen() on XML data");
     printf("    rapidxml:\n");
-    test<rapidxml_parser<parse_fastest> >(filename, "mode=fastest");
-    test<rapidxml_parser<parse_default> >(filename, "mode=default");
+    test_file<rapidxml_parser<parse_fastest> >(filename, "mode=fastest");
+    test_file<rapidxml_parser<parse_default> >(filename, "mode=default");
     printf("    pugixml:\n");
-    test<pugixml_parser<pugi::parse_minimal> >(filename, "mode=fastest");
-    test<pugixml_parser<pugi::parse_default> >(filename, "mode=default");
+    test_file<pugixml_parser<pugi::parse_minimal> >(filename, "mode=fastest");
+    test_file<pugixml_parser<pugi::parse_default> >(filename, "mode=default");
     printf("    pugxml:\n");
-    test<pugxml_parser<pug::parse_minimal> >(filename, "mode=fastest");
+    test_file<pugxml_parser<pug::parse_minimal> >(filename, "mode=fastest");
     printf("    tinyxml:\n");
-    test<tinyxml_parser>(filename, "mode=default");
+    test_file<tinyxml_parser>(filename, "mode=default");
 }
 
 int main()

@@ -1,4 +1,3 @@
-#include "../../rapidxml_utils.hpp"
 #include "../test_utils.hpp"
 
 #ifdef _MSC_VER

@@ -16,25 +16,16 @@ template<int Flags>
 void test_progressive_truncations()
 {
     // Load file
-    string filename("../xml_files/simple_all.xml");
-    ifstream stream(filename.c_str(), ios::binary);
-    if (!stream)
-        throw runtime_error(string("cannot open file ") + filename);
-    stream.unsetf(ios::skipws);
-    stream.seekg(0, ios::end);
-    size_t size = stream.tellg();
-    stream.seekg(0);
-    vector<char> original(size + 1);
-    stream.read(&original.front(), static_cast<streamsize>(size));
+    file<> f("../xml_files/simple_all.xml");
 
     // Test for crashes with progressive truncation
     cout << "Testing for crashes using progressive trunc, Flags=" << Flags << "...\n";
     int count = 0;
-    for (int end = int(size); end >= 0; --end)
+    for (int end = int(f.size()); end >= 0; --end)
     {
         try
         {
-            vector<char> data(original);    // Make a copy
+            vector<char> data(f.get());    // Make a copy
             data[end] = '\0';               // Truncate
             rapidxml::xml_document<char> doc;
             doc.parse<Flags>(&data.front());
@@ -47,7 +38,7 @@ void test_progressive_truncations()
     }
 
     // Success
-    cout << "Progressive truncation succeeded, " << count << " errors in " << original.size() << " tries\n";
+    cout << "Progressive truncation succeeded, " << count << " errors in " << f.size() << " tries\n";
 }
 
 // Tests parsing a valid document which is mutated by inserting random garbage
@@ -62,16 +53,8 @@ void test_random_mutations()
     srand(77);
 
     // Load file
-    string filename("../xml_files/simple_all.xml");
-    ifstream stream(filename.c_str(), ios::binary);
-    if (!stream)
-        throw runtime_error(string("cannot open file ") + filename);
-    stream.unsetf(ios::skipws);
-    stream.seekg(0, ios::end);
-    size_t size = stream.tellg();
-    stream.seekg(0);
-    vector<char> original(size + 1);
-    stream.read(&original.front(), static_cast<streamsize>(size));
+    file<> f("../xml_files/simple_all.xml");
+    size_t size = f.size();
 
     // Perform mutations
     cout << "Testing for crashes using random mutations, Flags=" << Flags << "...\n";
@@ -79,7 +62,7 @@ void test_random_mutations()
     for (int i = 0; i < num_mutations; ++i)
     {
         // Make a copy of data
-        vector<char> data(original);
+        vector<char> data(f.get());
 
         // Mutate
         int num_garbage_chars = rand() % max_garbage_chars_per_mutation + 1;
@@ -97,12 +80,10 @@ void test_random_mutations()
             // Ignore errors
             ++count;
         }
-
     }
 
     // Success
     cout << "Random Mutations succeeded, " << count << " errors in " << num_mutations << " tries\n";
-
 }
 
 int main()

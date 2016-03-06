@@ -1,6 +1,5 @@
 #include "../test_utils.hpp"
 #include "../../rapidxml.hpp"
-#include "../../rapidxml_utils.hpp"
 #include "../../rapidxml_iterators.hpp"
 #include <string>
 #include <stdexcept>
