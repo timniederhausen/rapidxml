@@ -702,6 +702,12 @@ namespace rapidxml
             return m_value ? m_value_size : 0;
         }
 
+        //! Get the start offset of this node inside the source string.
+        Ch *offset() const
+        {
+            return m_offset;
+        }
+
         ///////////////////////////////////////////////////////////////////////////
         // Node modification
 
@@ -762,6 +768,13 @@ namespace rapidxml
             this->value(value, internal::measure(value));
         }
 
+        //! Sets the offset inside the source string.
+        //! This is only intended for debugging purposes.
+        void offset(Ch *offset)
+        {
+            m_offset = offset;
+        }
+
         ///////////////////////////////////////////////////////////////////////////
         // Related nodes access
 
@@ -786,7 +799,7 @@ namespace rapidxml
         std::size_t m_name_size;            // Length of node name, or undefined of no name
         std::size_t m_value_size;           // Length of node value, or undefined if no value
         xml_node<Ch> *m_parent;             // Pointer to parent node, or 0 if none
-
+        Ch *m_offset;                       // Start offset of this node inside the string
     };
 
     //! Class representing attribute node of XML document.
@@ -1753,6 +1766,7 @@ namespace rapidxml
 
             // Create declaration
             xml_node<Ch> *declaration = this->allocate_node(node_declaration);
+            declaration->offset(text);
 
             // Skip whitespace before attributes or ?>
             skip<whitespace_pred, Flags>(text);
@@ -1799,6 +1813,7 @@ namespace rapidxml
 
             // Create comment node
             xml_node<Ch> *comment = this->allocate_node(node_comment);
+            comment->offset(value);
             comment->value(value, text - value);
 
             // Place zero terminator after comment value
@@ -1858,6 +1873,7 @@ namespace rapidxml
             {
                 // Create a new doctype node
                 xml_node<Ch> *doctype = this->allocate_node(node_doctype);
+                doctype->offset(value);
                 doctype->value(value, text - value);
 
                 // Place zero terminator after value
@@ -1884,6 +1900,7 @@ namespace rapidxml
             {
                 // Create pi node
                 xml_node<Ch> *pi = this->allocate_node(node_pi);
+                pi->offset(text);
 
                 // Extract PI target name
                 Ch *name = text;
@@ -2022,6 +2039,7 @@ namespace rapidxml
 
             // Create new cdata node
             xml_node<Ch> *cdata = this->allocate_node(node_cdata);
+            cdata->offset(value);
             cdata->value(value, text - value);
 
             // Place zero terminator after value
@@ -2038,6 +2056,7 @@ namespace rapidxml
         {
             // Create element node
             xml_node<Ch> *element = this->allocate_node(node_element);
+            element->offset(text);
 
             // Extract element name
             Ch *name = text;
