@@ -3348,7 +3348,7 @@ public:
 	//<remarks>Pointer space may be grown, memory for name/value members allocated.</remarks>
 	xml_attribute append_attribute(const TCHAR* name,long value)
 	{
-		if(!name) return false;
+		if(!name) return xml_attribute();
 		TCHAR temp[32] = {0};
 		sprintf(temp,_T("%ld"),value);
 		return append_attribute(name,temp);
@@ -3361,7 +3361,7 @@ public:
 	//<remarks>Pointer space may be grown, memory for name/value members allocated.</remarks>
 	xml_attribute append_attribute(const TCHAR* name,double value)
 	{
-		if(!name) return false;
+		if(!name) return xml_attribute();
 		TCHAR temp[32] = {0};
 		sprintf(temp,_T("%lf"),value);
 		return append_attribute(name,temp);
@@ -3374,7 +3374,7 @@ public:
 	//<remarks>Pointer space may be grown, memory for name/value members allocated.</remarks>
 	xml_attribute append_attribute(const TCHAR* name,bool value)
 	{
-		if(!name) return false;
+		if(!name) return xml_attribute();
 		return append_attribute(name,((value)?_T("true"):_T("false")));
 	}
 
