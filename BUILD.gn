@@ -1,0 +1,7 @@
+config("rapidxml_config") {
+  include_dirs = [ "." ]
+}
+
+group("rapidxml") {
+  public_configs = [ ":rapidxml_config" ]
+}
