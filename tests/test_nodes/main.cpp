@@ -1,4 +1,5 @@
 #include "../test_utils.hpp"
+#include "../../rapidxml_utils.hpp"
 
 #ifdef _MSC_VER
     #pragma warning(push)

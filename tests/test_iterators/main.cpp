@@ -31,7 +31,7 @@ void test_all()
 
     iterator_range<attribute_iterator<>> n3 = attributes(root);
     CHECK(1 == std::distance(n1.begin(), n1.end()));
-    CHECK(name<Flags>(&*n3.begin()) == "entities");
+    CHECK(name<Flags>(*n3.begin()) == "entities");
 }
 
 int main()
