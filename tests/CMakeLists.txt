@@ -2,8 +2,6 @@
 # Distributed under the Boost Software License, Version 1.0.
 # (See accompanying file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-enable_testing()
-
 macro(rapidxml_add_test tgt_name)
 	add_executable(rapidxml.${tgt_name} ${ARGN})
 	target_link_libraries(rapidxml.${tgt_name} rapidxml)
