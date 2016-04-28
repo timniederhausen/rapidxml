@@ -11,6 +11,8 @@
 *.cmake text
 *.html text
 
+# Use CRLF line endings for XML files (necessary for some tests)
+*.xml text eol=crlf
 *.sln text eol=crlf
 
 Makefile text eol=lf
