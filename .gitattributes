@@ -1,0 +1,19 @@
+* text=auto
+
+*.c text
+*.h text
+*.cc text
+*.hh text
+*.cpp text
+*.hpp text
+*.py text
+*.txt text
+*.cmake text
+*.html text
+
+# Use CRLF line endings for XML files (necessary for some tests)
+*.xml text eol=crlf
+*.sln text eol=crlf
+
+Makefile text eol=lf
+*.sh text eol=lf
