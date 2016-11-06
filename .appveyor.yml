@@ -1,0 +1,17 @@
+version: 1.0.{build}
+clone_depth: 1
+
+environment:
+    matrix:
+        - RAPIDXML_GENERATOR: "Visual Studio 14 2015"
+
+before_build:
+    - mkdir build
+    - cd build
+    - cmake .. "-G%RAPIDXML_GENERATOR%" ..
+
+build_script:
+    - cmake --build .
+
+test_script:
+    - cmake --build . --target RUN_TESTS
