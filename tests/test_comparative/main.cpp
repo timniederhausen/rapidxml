@@ -281,7 +281,7 @@ int main()
     try
     {
         // Load file list
-        ifstream stream("filelist.txt", ios::binary);
+        ifstream stream("filelist.txt");
         if (!stream)
             throw runtime_error("filelist.txt not found");
         vector<string> files;
