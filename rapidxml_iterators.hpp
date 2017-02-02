@@ -19,86 +19,103 @@ namespace rapidxml
     {
     public:
         typedef xml_node<Ch> *value_type;
-        typedef xml_node<Ch> *reference;
+        typedef const value_type& reference;
         typedef xml_node<Ch> *pointer;
         typedef std::ptrdiff_t difference_type;
         typedef std::bidirectional_iterator_tag iterator_category;
 
         node_iterator()
-            : m_node(0)
+            : m_cur(0)
+            , m_prev(0)
             , m_flags(0)
         {
         }
 
-        node_iterator(xml_node<Ch>* node, unsigned char flags)
-            : m_node(node)
+        node_iterator(xml_node<Ch>* node, xml_node<Ch>* prev,
+                      unsigned char flags)
+            : m_cur(node)
+            , m_prev(prev)
             , m_flags(flags)
         {
         }
 
         reference operator*() const
         {
-            assert(m_node);
-            return m_node;
+            assert(m_cur);
+            return m_cur;
         }
 
         pointer operator->() const
         {
-            assert(m_node);
-            return m_node;
+            assert(m_cur);
+            return m_cur;
         }
 
         node_iterator& operator++()
         {
-            assert(m_node);
-            if (m_flags & iterate_check_name)
-                m_node = m_node->next_sibling(m_node->name(),
-                                              m_node->name_size(),
-                                              !!(m_flags & iterate_case_sensitive));
-            else
-                m_node = m_node->next_sibling();
+            increment();
             return *this;
         }
 
         node_iterator operator++(int)
         {
             node_iterator tmp = *this;
-            ++this;
+            increment();
             return tmp;
         }
 
         node_iterator& operator--()
         {
-            assert(m_node);
-            if (m_flags & iterate_check_name)
-                m_node = m_node->previous_sibling(m_node->name(),
-                                                  m_node->name_size(),
-                                                  !!(m_flags & iterate_case_sensitive));
-            else
-                m_node = m_node->previous_sibling();
-            assert(m_node);
+            decrement();
             return *this;
         }
 
         node_iterator operator--(int)
         {
             node_iterator tmp = *this;
-            ++this;
+            decrement();
             return tmp;
         }
 
         bool operator==(const node_iterator<Ch> &rhs)
         {
-            return m_node == rhs.m_node;
+            return m_cur == rhs.m_cur;
         }
 
         bool operator!=(const node_iterator<Ch> &rhs)
         {
-            return m_node != rhs.m_node;
+            return m_cur != rhs.m_cur;
         }
 
     private:
-        xml_node<Ch> *m_node;
+        void increment()
+        {
+            assert(m_cur && "Attempted to increment end iterator");
+            m_prev = m_cur;
+
+            if (m_flags & iterate_check_name)
+                m_cur = m_cur->next_sibling(
+                    m_cur->name(), m_cur->name_size(),
+                    !!(m_flags & iterate_case_sensitive));
+            else
+                m_cur = m_cur->next_sibling();
+        }
+
+        void decrement()
+        {
+            assert(m_prev && "Attempted to decrement begin iterator");
+            m_cur = m_prev;
+
+            if (m_flags & iterate_check_name)
+                m_prev = m_prev->previous_sibling(
+                    m_prev->name(), m_prev->name_size(),
+                    !!(m_flags & iterate_case_sensitive));
+            else
+                m_prev = m_prev->previous_sibling();
+        }
+
+        xml_node<Ch> *m_cur;
+        xml_node<Ch> *m_prev;
         unsigned char m_flags;
     };
 
@@ -108,86 +125,103 @@ namespace rapidxml
     {
     public:
         typedef xml_attribute<Ch> *value_type;
-        typedef xml_attribute<Ch> *reference;
+        typedef const value_type& reference;
         typedef xml_attribute<Ch> *pointer;
         typedef std::ptrdiff_t difference_type;
         typedef std::bidirectional_iterator_tag iterator_category;
 
         attribute_iterator()
-            : m_attribute(0)
+            : m_cur(0)
+            , m_prev(0)
             , m_flags(0)
         {
         }
 
-        attribute_iterator(xml_attribute<Ch>* attr, unsigned char flags)
-            : m_attribute(attr)
+        attribute_iterator(xml_attribute<Ch>* attr, xml_attribute<Ch>* prev,
+                           unsigned char flags)
+            : m_cur(attr)
+            , m_prev(prev)
             , m_flags(flags)
         {
         }
 
         reference operator*() const
         {
-            assert(m_attribute);
-            return m_attribute;
+            assert(m_cur);
+            return m_cur;
         }
 
         pointer operator->() const
         {
-            assert(m_attribute);
-            return m_attribute;
+            assert(m_cur);
+            return m_cur;
         }
 
         attribute_iterator& operator++()
         {
-            assert(m_attribute);
-            if (m_flags & iterate_check_name)
-                m_attribute = m_attribute->next_attribute(m_attribute->name(),
-                                                          m_attribute->name_size(),
-                                                          !!(m_flags & iterate_case_sensitive));
-            else
-                m_attribute = m_attribute->next_attribute();
+            increment();
             return *this;
         }
 
         attribute_iterator operator++(int)
         {
             attribute_iterator tmp = *this;
-            ++this;
+            increment();
             return tmp;
         }
 
         attribute_iterator& operator--()
         {
-            assert(m_attribute);
-            if (m_flags & iterate_check_name)
-                m_attribute = m_attribute->previous_attribute(m_attribute->name(),
-                                                              m_attribute->name_size(),
-                                                              !!(m_flags & iterate_case_sensitive));
-            else
-                m_attribute = m_attribute->previous_attribute();
-            assert(m_attribute);
+            decrement();
             return *this;
         }
 
         attribute_iterator operator--(int)
         {
             attribute_iterator tmp = *this;
-            ++this;
+            decrement();
             return tmp;
         }
 
         bool operator==(const attribute_iterator<Ch> &rhs)
         {
-            return m_attribute == rhs.m_attribute;
+            return m_cur == rhs.m_cur;
         }
 
         bool operator!=(const attribute_iterator<Ch> &rhs)
         {
-            return m_attribute != rhs.m_attribute;
+            return m_cur != rhs.m_cur;
         }
 
     private:
-        xml_attribute<Ch>* m_attribute;
+        void increment()
+        {
+            assert(m_cur && "Attempted to increment end iterator");
+            m_prev = m_cur;
+
+            if (m_flags & iterate_check_name)
+                m_cur = m_cur->next_attribute(
+                    m_cur->name(), m_cur->name_size(),
+                    !!(m_flags & iterate_case_sensitive));
+            else
+                m_cur = m_cur->next_attribute();
+        }
+
+        void decrement()
+        {
+            assert(m_prev && "Attempted to decrement begin iterator");
+            m_cur = m_prev;
+
+            if (m_flags & iterate_check_name)
+                m_prev = m_prev->previous_attribute(
+                    m_prev->name(), m_prev->name_size(),
+                    !!(m_flags & iterate_case_sensitive));
+            else
+                m_prev = m_prev->previous_attribute();
+        }
+
+        xml_attribute<Ch>* m_cur;
+        xml_attribute<Ch>* m_prev;
         unsigned char m_flags;
     };
 
@@ -225,10 +259,14 @@ namespace rapidxml
         if (case_sensitive)
             flags |= iterate_case_sensitive;
 
-        node_iterator<Ch> first(node->first_node(name, name_size, case_sensitive),
-                                flags);
-        node_iterator<Ch> last(0, flags);
-        return iterator_range<node_iterator<Ch>>(first, last);
+        xml_node<Ch>* first =
+            node->first_node(name, name_size, case_sensitive);
+        xml_node<Ch>* last =
+            node->last_node(name, name_size, case_sensitive);
+
+        node_iterator<Ch> begin(first, 0, flags);
+        node_iterator<Ch> end(0, last, flags);
+        return iterator_range<node_iterator<Ch>>(begin, end);
     }
 
     template <class Ch>
@@ -243,10 +281,14 @@ namespace rapidxml
         if (case_sensitive)
             flags |= iterate_case_sensitive;
 
-        attribute_iterator<Ch> first(node->first_attribute(name, name_size, case_sensitive),
-                                     flags);
-        attribute_iterator<Ch> last(0, flags);
-        return iterator_range<attribute_iterator<Ch>>(first, last);
+        xml_attribute<Ch>* first =
+            node->first_attribute(name, name_size, case_sensitive);
+        xml_attribute<Ch>* last =
+            node->last_attribute(name, name_size, case_sensitive);
+
+        attribute_iterator<Ch> begin(first, 0, flags);
+        attribute_iterator<Ch> end(0, last, flags);
+        return iterator_range<attribute_iterator<Ch>>(begin, end);
     }
 }
 
