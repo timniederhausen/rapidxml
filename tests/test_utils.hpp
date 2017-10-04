@@ -32,7 +32,7 @@ public:
 
         // Determine stream size
         stream.seekg(0, ios::end);
-        m_size = stream.tellg();
+        m_size = static_cast<std::size_t>(stream.tellg());
         stream.seekg(0);
 
         // Load data and add terminating 0
