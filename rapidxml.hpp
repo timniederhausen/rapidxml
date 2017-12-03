@@ -657,6 +657,7 @@ namespace rapidxml
         xml_base()
             : m_name(0)
             , m_value(0)
+            , m_value_size(0)
             , m_parent(0)
         {
         }
@@ -689,7 +690,7 @@ namespace rapidxml
         //! <br><br>
         //! Use value_size() function to determine length of the value.
         //! \return Value of node, or empty string if node has no value.
-        Ch *value() const
+        const Ch *value() const
         {
             return m_value ? m_value : nullstr();
         }
@@ -914,8 +915,17 @@ namespace rapidxml
         xml_node(node_type type)
             : m_type(type)
             , m_first_node(0)
+            , m_last_node(0)
             , m_first_attribute(0)
+            , m_last_attribute(0)
         {
+        }
+
+        void resetRest() {
+            m_last_attribute = NULL;
+            m_prev_sibling = NULL;
+            m_next_sibling = NULL;
+            this->m_name_size = 0;
         }
 
         ///////////////////////////////////////////////////////////////////////////
@@ -1395,6 +1405,8 @@ namespace rapidxml
         {
             assert(text);
 
+            this->resetRest();
+
             // Remove current contents
             this->remove_all_nodes();
             this->remove_all_attributes();
@@ -1597,6 +1609,7 @@ namespace rapidxml
             // Use translation skip
             Ch *src = text;
             Ch *dest = src;
+            bool shorter = false;
             while (StopPred::test(*src))
             {
                 // If entity translation is enabled
@@ -1615,6 +1628,7 @@ namespace rapidxml
                                 *dest = Ch('&');
                                 ++dest;
                                 src += 5;
+                                shorter = true;
                                 continue;
                             }
                             if (src[2] == Ch('p') && src[3] == Ch('o') && src[4] == Ch('s') && src[5] == Ch(';'))
@@ -1622,6 +1636,7 @@ namespace rapidxml
                                 *dest = Ch('\'');
                                 ++dest;
                                 src += 6;
+                                shorter = true;
                                 continue;
                             }
                             break;
@@ -1633,6 +1648,7 @@ namespace rapidxml
                                 *dest = Ch('"');
                                 ++dest;
                                 src += 6;
+                                shorter = true;
                                 continue;
                             }
                             break;
@@ -1644,6 +1660,7 @@ namespace rapidxml
                                 *dest = Ch('>');
                                 ++dest;
                                 src += 4;
+                                shorter = true;
                                 continue;
                             }
                             break;
@@ -1655,6 +1672,7 @@ namespace rapidxml
                                 *dest = Ch('<');
                                 ++dest;
                                 src += 4;
+                                shorter = true;
                                 continue;
                             }
                             break;
@@ -1722,6 +1740,11 @@ namespace rapidxml
                 // No replacement, only copy character
                 *dest++ = *src++;
 
+            }
+            if(shorter) {
+                // Add terminating zero after decoded shorter value 2
+                if (!(Flags & parse_no_string_terminators))
+                    *dest = 0;
             }
 
             // Return new end
@@ -1930,7 +1953,7 @@ namespace rapidxml
                 if (!(Flags & parse_no_string_terminators))
                 {
                     pi->name()[pi->name_size()] = Ch('\0');
-                    pi->value()[pi->value_size()] = Ch('\0');
+                    const_cast<Ch *>(pi->value())[pi->value_size()] = Ch('\0');
                 }
 
                 text += 2;                          // Skip '?>'
@@ -2309,7 +2332,7 @@ namespace rapidxml
 
                 // Add terminating zero after value
                 if (!(Flags & parse_no_string_terminators))
-                    attribute->value()[attribute->value_size()] = 0;
+                    const_cast<Ch *>(attribute->value())[attribute->value_size()] = 0;
 
                 // Skip whitespace after attribute value
                 skip<whitespace_pred, Flags>(text);
