@@ -901,6 +901,17 @@ namespace rapidxml
                 return this->m_parent ? m_next_attribute : 0;
         }
 
+        xml_attribute<Ch> *shiftBases(long shiftA, long shift) {
+            xml_attribute<Ch> *next_attribute = m_next_attribute;
+            *(char**)&this->m_name += shiftA;
+            *(char**)&this->m_value += shiftA;
+            if(this->m_parent) *(char**)&this->m_parent += shift;
+            if(m_prev_attribute) *(char**)&m_prev_attribute += shift;
+            if(m_next_attribute) *(char**)&m_next_attribute += shift;
+            if(shift > 0) return m_next_attribute;
+            else return next_attribute;
+        }
+
     private:
 
         xml_attribute<Ch> *m_prev_attribute;        // Pointer to previous sibling of attribute, or 0 if none; only valid if parent is non-zero
@@ -1353,6 +1364,30 @@ namespace rapidxml
             for (xml_attribute<Ch> *attribute = first_attribute(); attribute; attribute = attribute->m_next_attribute)
                 attribute->m_parent = 0;
             m_first_attribute = 0;
+        }
+
+        void shiftBases(long shiftA, long shift, xml_document<Ch> *masterDoc) {
+            *(char**)&this->m_name += shiftA;
+            if(this->m_parent) {
+                if(this->m_parent == (xml_document<Ch> *)-1) this->m_parent = masterDoc;
+                else if(this->m_parent != masterDoc) *(char**)&this->m_parent += shift;
+                else this->m_parent = (xml_document<Ch> *)-1;
+            }
+            if(m_first_node) *(char**)&m_first_node += shift;
+            if(m_last_node) *(char**)&m_last_node += shift;
+            if(m_first_attribute) {
+                if(shift > 0)
+                    *(char**)&m_first_attribute += shift;
+                xml_attribute<Ch> *a = m_first_attribute;
+                while(a) {
+                    a = a->shiftBases(shiftA, shift);
+                }
+                if(shift < 0)
+                    *(char**)&m_first_attribute += shift;
+            }
+            if(m_last_attribute) *(char**)&m_last_attribute += shift;
+            if(m_prev_sibling) *(char**)&m_prev_sibling += shift;
+            if(m_next_sibling) *(char**)&m_next_sibling += shift;
         }
 
     private:
