@@ -1463,6 +1463,76 @@ namespace rapidxml
             memory_pool<Ch>::clear();
         }
 
+        // Adjust objects pointers 2be or !2be relative 2be able to save/load rapidXML DOM objects
+        // #define RAPIDXML_STATIC_POOL_SIZE 4
+        // #define RAPIDXML_DYNAMIC_POOL_SIZE (16*1024 * 1024)
+        // Enought space has to be set 4 RAPIDXML_DYNAMIC_POOL_SIZE 4realloc to work properly - dynamic memory chunks cann't be supported
+        // 1st node, xml text start, false 4relative/true 4relative2abs, nodes# for info
+        void realloc(xml_node<> *pos, const char *xmlData, bool addSub, int& nodes) {
+            long shift, shiftA;
+            if(addSub) {
+                shift = (long)pos, shiftA= (long)xmlData;
+            } else {
+                shift = -(long)pos, shiftA= -(long)xmlData;
+            }
+            if(shift > 0) {
+                *(char**)&pos = (char*)shift;
+                shift -= 4;
+            } else {
+                shift += 4;
+            }
+            while(pos) {
+                nodes++;
+                xml_node<> *pos2;
+                if(shift < 0) pos2 = pos->first_node();
+                pos->shiftBases(shiftA, shift, this);
+                if(shift > 0) pos2 = pos->first_node();
+                while(pos2) {
+                    nodes++;
+                    pos2->shiftBases(shiftA, shift, this);
+                    if(pos2->first_node()) {
+                        pos2 = pos2->first_node();
+                        if(pos2 && (shift < 0)) *(char**)&pos2 -= shift;
+                    } else {
+                        if(pos2->next_sibling()) {
+                            pos2 = pos2->next_sibling();
+                            if(pos2 && (shift < 0)) *(char**)&pos2 -= shift;
+                        } else {
+                            xml_node<> *pos3;
+                            while(pos2) {
+                                pos3 = pos2->parent();
+                                if(pos3 && (shift < 0)) *(char**)&pos3 -= shift;
+                                if(pos3->parent() && !pos3->next_sibling()) {
+                                    pos2 = pos3;
+                                } else break;
+                            }
+                            if(pos2) pos3 = pos2->parent();
+                            if(pos3 && (shift < 0)) *(char**)&pos3 -= shift;
+                            if(pos3->parent() && pos3->next_sibling()) {
+                                pos2 = pos3->next_sibling();
+                                if(pos2 && (shift < 0)) *(char**)&pos2 -= shift;
+                            } else break;
+                        }
+                    }
+                } // while(pos2)
+                if(pos->next_sibling()) {
+                    pos = pos->next_sibling();
+                } else {
+                    if(/*(long)pos->parent() != -1 &&*/ (long)pos->parent() > 4 && pos->parent()->parent() && pos->parent()->next_sibling()) {
+                        pos = pos->parent()->next_sibling();
+                    } else {
+                        pos = NULL;
+                        while(pos2 && /*(long)pos2->parent() != -1 &&*/ (long)pos2->parent() > 4 && pos2->parent() && pos2->parent()->parent() && !pos2->parent()->next_sibling()) {
+                            pos2 = pos2->parent();
+                        }
+                        if(pos2 && /*(long)pos2->parent() != -1 &&*/ (long)pos2->parent() > 4 && pos2->parent() && pos2->parent()->parent() && pos2->parent()->next_sibling()) {
+                            pos = pos2->parent()->next_sibling();
+                        }
+                    }
+                }
+            }
+        }
+        
     private:
 
         // Insert coded character, using UTF8 or 8-bit ASCII
