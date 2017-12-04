@@ -658,6 +658,7 @@ namespace rapidxml
             : m_name(0)
             , m_value(0)
             , m_parent(0)
+            , m_offset(0)
         {
         }
 
