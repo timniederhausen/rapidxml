@@ -281,7 +281,61 @@ void test_pi_node()
         CHECK(name<Flags>(pi) == "target");
         CHECK(value<Flags>(pi) == "<some><instructions>");
     }
+}
 
+template<int Flags>
+void test_node_with_char_refs()
+{
+    cout << "Test node with character references...\n";
+
+    xml_document<char> doc;
+    file<char> xml("../xml_files/simple_char_references.xml");
+    doc.parse<Flags>(xml.data());
+
+    xml_node<char> *r = doc.first_node();
+    REQUIRE(r);
+    CHECK(r->type() == node_element);
+    CHECK(name<Flags>(r) == "root");
+    if (Flags & parse_no_entity_translation)
+    {
+        if (Flags & parse_normalize_whitespace)
+        {
+            CHECK(value<Flags>(r) == "&lt;&gt;&amp;&quot;&apos;&#32;&#x2A;&#x2a;");
+            CHECK(r->value_size() == 42);
+        }
+        else
+        {
+            CHECK(value<Flags>(r) == "\r\n\t&lt;&gt;&amp;&quot;&apos;&#32;&#x2A;&#x2a;\r\n");
+            CHECK(r->value_size() == 42+5);
+        }
+    }
+    else if (Flags & parse_trim_whitespace)
+    {
+        CHECK(value<Flags>(r) == "<>&\"' **");
+        CHECK(r->value_size() == 8);
+    }
+    else if (Flags & parse_normalize_whitespace)
+    {
+        CHECK(value<Flags>(r) == " <>&\"' ** ");
+        CHECK(r->value_size() == 10);
+    }
+    else
+    {
+        CHECK(value<Flags>(r) == "\r\n\t<>&\"' **\r\n");
+        CHECK(r->value_size() == 8+5);
+    }
+    if (Flags & parse_no_entity_translation)
+    {
+        xml_attribute<char> *attr = r->first_attribute();
+        CHECK(value<Flags>(attr) == "&lt;&gt;&amp;&quot;&apos;&#32;&#x2A;&#x2a;");
+        CHECK(attr->value_size() == 42);
+    }
+    else
+    {
+        xml_attribute<char> *attr = r->first_attribute();
+        CHECK(value<Flags>(attr) == "<>&\"' **");
+        CHECK(attr->value_size() == 8);
+    }
 }
 
 template<int Flags>
@@ -296,6 +350,7 @@ void test_all()
     test_comment_node<Flags>();
     test_doctype_node<Flags>();
     test_pi_node<Flags>();
+    test_node_with_char_refs<Flags>();
 }
 
 int main()
