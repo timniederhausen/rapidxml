@@ -9,8 +9,32 @@
 // If standard library is disabled, user must provide implementations of required functions and typedefs
 #if !defined(RAPIDXML_NO_STDLIB)
     #include <cstdlib>      // For std::size_t
+    #include <cstring>      // (Optional.) For std::strlen, ...
+    #include <cwchar>       // (Optional.) For std::wcslen, ...
     #include <cassert>      // For assert
     #include <new>          // For placement new
+#endif
+
+// RAPIDXML_NOEXCEPT: Expands to 'noexcept' on supported compilers.
+#if !defined(RAPIDXML_NOEXCEPT)
+# if !defined(RAPIDXML_DISABLE_NOEXCEPT)
+#  if defined(__clang__)
+#   if __has_feature(__cxx_noexcept__)
+#    define RAPIDXML_NOEXCEPT noexcept(true)
+#   endif
+#  elif defined(__GNUC__)
+#   if ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 7)) || (__GNUC__ > 4)
+#    if defined(__GXX_EXPERIMENTAL_CXX0X__)
+#      define RAPIDXML_NOEXCEPT noexcept(true)
+#    endif
+#   endif
+#  elif defined(_MSC_VER) && (_MSC_VER >= 1900)
+#    define RAPIDXML_NOEXCEPT noexcept(true)
+#  endif
+# endif
+# if !defined(RAPIDXML_NOEXCEPT)
+#  define RAPIDXML_NOEXCEPT
+# endif
 #endif
 
 // On MSVC, disable "conditional expression is constant" warning (level 4).
@@ -70,9 +94,7 @@ namespace rapidxml
     //! This class derives from <code>std::exception</code> class.
     class parse_error: public std::exception
     {
-
     public:
-
         //! Constructs parse error
         parse_error(const char *what, void *where)
             : m_what(what)
@@ -97,10 +119,8 @@ namespace rapidxml
         }
 
     private:
-
         const char *m_what;
         void *m_where;
-
     };
 }
 
@@ -307,7 +327,7 @@ namespace rapidxml
 
         // Find length of the string
         template<class Ch>
-        inline std::size_t measure(const Ch *p)
+        inline std::size_t measure(const Ch *p) RAPIDXML_NOEXCEPT
         {
             const Ch *tmp = p;
             while (*tmp)
@@ -315,9 +335,18 @@ namespace rapidxml
             return tmp - p;
         }
 
+#if !defined(RAPIDXML_NO_STDLIB)
+        inline std::size_t measure(const char* p) RAPIDXML_NOEXCEPT
+        { return std::strlen(p); }
+
+        inline std::size_t measure(const wchar_t* p) RAPIDXML_NOEXCEPT
+        { return std::wcslen(p); }
+#endif
+
         // Compare strings for equality
         template<class Ch>
-        inline bool compare(const Ch *p1, std::size_t size1, const Ch *p2, std::size_t size2, bool case_sensitive)
+        inline bool compare(const Ch *p1, std::size_t size1, const Ch *p2,
+                            std::size_t size2, bool case_sensitive) RAPIDXML_NOEXCEPT
         {
             if (size1 != size2)
                 return false;
@@ -387,7 +416,7 @@ namespace rapidxml
         //! \endcond
 
         //! Constructs empty pool with default allocator functions.
-        memory_pool()
+        memory_pool() RAPIDXML_NOEXCEPT
             : m_alloc_func(0)
             , m_free_func(0)
         {
@@ -522,7 +551,7 @@ namespace rapidxml
         //! Clears the pool.
         //! This causes memory occupied by nodes allocated by the pool to be freed.
         //! Any nodes or strings allocated from the pool will no longer be valid.
-        void clear()
+        void clear() RAPIDXML_NOEXCEPT
         {
             while (m_begin != m_static_memory)
             {
@@ -563,14 +592,14 @@ namespace rapidxml
             char *previous_begin;
         };
 
-        void init()
+        void init() RAPIDXML_NOEXCEPT
         {
             m_begin = m_static_memory;
             m_ptr = align(m_begin);
             m_end = m_static_memory + sizeof(m_static_memory);
         }
 
-        char *align(char *ptr)
+        char *align(char *ptr) const RAPIDXML_NOEXCEPT
         {
             std::size_t alignment = ((RAPIDXML_ALIGNMENT - (std::size_t(ptr) & (RAPIDXML_ALIGNMENT - 1))) & (RAPIDXML_ALIGNMENT - 1));
             return ptr + alignment;
@@ -654,7 +683,7 @@ namespace rapidxml
         // Construction & destruction
 
         // Construct a base with empty name, value and parent
-        xml_base()
+        xml_base() RAPIDXML_NOEXCEPT
             : m_name(0)
             , m_value(0)
             , m_parent(0)
@@ -671,7 +700,7 @@ namespace rapidxml
         //! <br><br>
         //! Use name_size() function to determine length of the name.
         //! \return Name of node, or empty string if node has no name.
-        Ch *name() const
+        Ch *name() const RAPIDXML_NOEXCEPT
         {
             return m_name ? m_name : nullstr();
         }
@@ -679,7 +708,7 @@ namespace rapidxml
         //! Gets size of node name, not including terminator character.
         //! This function works correctly irrespective of whether name is or is not zero terminated.
         //! \return Size of node name, in characters.
-        std::size_t name_size() const
+        std::size_t name_size() const RAPIDXML_NOEXCEPT
         {
             return m_name ? m_name_size : 0;
         }
@@ -690,7 +719,7 @@ namespace rapidxml
         //! <br><br>
         //! Use value_size() function to determine length of the value.
         //! \return Value of node, or empty string if node has no value.
-        Ch *value() const
+        Ch *value() const RAPIDXML_NOEXCEPT
         {
             return m_value ? m_value : nullstr();
         }
@@ -698,13 +727,13 @@ namespace rapidxml
         //! Gets size of node value, not including terminator character.
         //! This function works correctly irrespective of whether value is or is not zero terminated.
         //! \return Size of node value, in characters.
-        std::size_t value_size() const
+        std::size_t value_size() const RAPIDXML_NOEXCEPT
         {
             return m_value ? m_value_size : 0;
         }
 
         //! Get the start offset of this node inside the source string.
-        Ch *offset() const
+        Ch *offset() const RAPIDXML_NOEXCEPT
         {
             return m_offset;
         }
@@ -725,7 +754,7 @@ namespace rapidxml
         //! Use name(const Ch *) function to have the length automatically calculated (string must be zero terminated).
         //! \param name Name of node to set. Does not have to be zero terminated.
         //! \param size Size of name, in characters. This does not include zero terminator, if one is present.
-        void name(const Ch *name, std::size_t size)
+        void name(const Ch *name, std::size_t size) RAPIDXML_NOEXCEPT
         {
             m_name = const_cast<Ch *>(name);
             m_name_size = size;
@@ -734,7 +763,7 @@ namespace rapidxml
         //! Sets name of node to a zero-terminated string.
         //! See also \ref ownership_of_strings and xml_node::name(const Ch *, std::size_t).
         //! \param name Name of node to set. Must be zero terminated.
-        void name(const Ch *name)
+        void name(const Ch *name) RAPIDXML_NOEXCEPT
         {
             this->name(name, internal::measure(name));
         }
@@ -755,7 +784,7 @@ namespace rapidxml
         //! If you want to manipulate data of elements using values, use parser flag rapidxml::parse_no_data_nodes to prevent creation of data nodes by the parser.
         //! \param value value of node to set. Does not have to be zero terminated.
         //! \param size Size of value, in characters. This does not include zero terminator, if one is present.
-        void value(const Ch *value, std::size_t size)
+        void value(const Ch *value, std::size_t size) RAPIDXML_NOEXCEPT
         {
             m_value = const_cast<Ch *>(value);
             m_value_size = size;
@@ -764,14 +793,14 @@ namespace rapidxml
         //! Sets value of node to a zero-terminated string.
         //! See also \ref ownership_of_strings and xml_node::value(const Ch *, std::size_t).
         //! \param value Vame of node to set. Must be zero terminated.
-        void value(const Ch *value)
+        void value(const Ch *value) RAPIDXML_NOEXCEPT
         {
             this->value(value, internal::measure(value));
         }
 
         //! Sets the offset inside the source string.
         //! This is only intended for debugging purposes.
-        void offset(Ch *offset)
+        void offset(Ch *offset) RAPIDXML_NOEXCEPT
         {
             m_offset = offset;
         }
@@ -781,7 +810,7 @@ namespace rapidxml
 
         //! Gets node parent.
         //! \return Pointer to parent node, or 0 if there is no parent.
-        xml_node<Ch> *parent() const
+        xml_node<Ch> *parent() const RAPIDXML_NOEXCEPT
         {
             return m_parent;
         }
@@ -789,7 +818,7 @@ namespace rapidxml
     protected:
 
         // Return empty string
-        static Ch *nullstr()
+        static Ch *nullstr() RAPIDXML_NOEXCEPT
         {
             static Ch zero = Ch('\0');
             return &zero;
