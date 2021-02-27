@@ -261,8 +261,8 @@ namespace rapidxml
 
         xml_node<Ch>* first =
             node->first_node(name, name_size, case_sensitive);
-        xml_node<Ch>* last =
-            node->last_node(name, name_size, case_sensitive);
+        xml_node<Ch>* last = first ?
+            node->last_node(name, name_size, case_sensitive) : nullptr;
 
         node_iterator<Ch> begin(first, 0, flags);
         node_iterator<Ch> end(0, last, flags);
