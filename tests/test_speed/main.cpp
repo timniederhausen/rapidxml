@@ -7,6 +7,9 @@
 #include <iomanip>
 #include <stdexcept>
 #include <algorithm>
+#if defined(_MSC_VER)
+# include <intrin.h>
+#endif
 
 #define RAPIDXML_NO_EXCEPTIONS
 #include "../test_utils.hpp"
@@ -50,7 +53,7 @@ namespace rapidxml
     typedef __int64 tick_t;
     inline tick_t ticks()
     {
-        __asm __emit 0fh __asm __emit 031h   // RDTSC, result conveniently in EDX:EAX
+        return __rdtsc();   // RDTSC, result conveniently in EDX:EAX
     }
 
 #elif defined(__GNUC__)
