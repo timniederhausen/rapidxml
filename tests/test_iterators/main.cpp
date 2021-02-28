@@ -79,6 +79,9 @@ void test_attr_iterators(rapidxml::xml_document<char>& doc)
     CHECK(name<Flags>(*ait2++) == "att1");
     CHECK(ait2-- == a3.end());
     CHECK(ait2 == a3.begin());
+
+    iterator_range<attribute_iterator<>> a4 = attributes(attrs, "attNONEXISTENT");
+    CHECK(0 == std::distance(a4.begin(), a4.end()));
 }
 
 template<int Flags>

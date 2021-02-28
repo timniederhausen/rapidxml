@@ -324,17 +324,29 @@ void test_node_with_char_refs()
         CHECK(value<Flags>(r) == "\r\n\t<>&\"' **\r\n");
         CHECK(r->value_size() == 8+5);
     }
+
+    xml_attribute<char> *attr = r->first_attribute("attr");
     if (Flags & parse_no_entity_translation)
     {
-        xml_attribute<char> *attr = r->first_attribute();
         CHECK(value<Flags>(attr) == "&lt;&gt;&amp;&quot;&apos;&#32;&#x2A;&#x2a;");
         CHECK(attr->value_size() == 42);
     }
     else
     {
-        xml_attribute<char> *attr = r->first_attribute();
         CHECK(value<Flags>(attr) == "<>&\"' **");
         CHECK(attr->value_size() == 8);
+    }
+
+    xml_attribute<char> *attr_bug1 = r->first_attribute("bug1");
+    if (Flags & parse_no_entity_translation)
+    {
+        CHECK(value<Flags>(attr_bug1) == "Abcd, efgh-&gt;LMN");
+        CHECK(attr_bug1->value_size() == 18);
+    }
+    else
+    {
+        CHECK(value<Flags>(attr_bug1) == "Abcd, efgh->LMN");
+        CHECK(attr_bug1->value_size() == 15);
     }
 }
 

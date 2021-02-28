@@ -141,8 +141,10 @@ std::string name(rapidxml::xml_base<char> *node)
 {
     if (Flags & rapidxml::parse_no_string_terminators)
         return std::string(node->name(), node->name_size());
-    else
-        return std::string(node->name());
+
+    std::string name(node->name());
+    CHECK(name.size() == node->name_size());
+    return name;
 }
 
 template<int Flags>
@@ -150,8 +152,10 @@ std::string value(rapidxml::xml_base<char> *node)
 {
     if (Flags & rapidxml::parse_no_string_terminators)
         return std::string(node->value(), node->value_size());
-    else
-        return std::string(node->value());
+
+    std::string value(node->value());
+    CHECK(value.size() == node->value_size());
+    return value;
 }
 
 #endif
