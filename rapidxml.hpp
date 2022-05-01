@@ -1720,7 +1720,7 @@ namespace rapidxml
                                 while (1)
                                 {
                                     unsigned char digit = internal::lookup_tables<0>::lookup_digits[static_cast<unsigned char>(*src)];
-                                    if (src >= 256 || digit == 0xFF)
+                                    if (*src >= 256 || digit == 0xFF)
                                         break;
                                     code = code * 10 + digit;
                                     ++src;
