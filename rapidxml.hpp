@@ -1472,6 +1472,7 @@ namespace rapidxml
         {
             static unsigned char test(Ch ch)
             {
+                if (ch >= 256) return 0;
                 return internal::lookup_tables<0>::lookup_whitespace[static_cast<unsigned char>(ch)];
             }
         };
@@ -1481,6 +1482,7 @@ namespace rapidxml
         {
             static unsigned char test(Ch ch)
             {
+                if (ch >= 256) return 1;
                 return internal::lookup_tables<0>::lookup_node_name[static_cast<unsigned char>(ch)];
             }
         };
@@ -1490,6 +1492,7 @@ namespace rapidxml
         {
             static unsigned char test(Ch ch)
             {
+                if (ch >= 256) return 1;
                 return internal::lookup_tables<0>::lookup_attribute_name[static_cast<unsigned char>(ch)];
             }
         };
@@ -1499,6 +1502,7 @@ namespace rapidxml
         {
             static unsigned char test(Ch ch)
             {
+                if (ch >= 256) return 1;
                 return internal::lookup_tables<0>::lookup_text[static_cast<unsigned char>(ch)];
             }
         };
@@ -1508,6 +1512,7 @@ namespace rapidxml
         {
             static unsigned char test(Ch ch)
             {
+                if (ch >= 256) return 1;
                 return internal::lookup_tables<0>::lookup_text_pure_no_ws[static_cast<unsigned char>(ch)];
             }
         };
@@ -1517,6 +1522,7 @@ namespace rapidxml
         {
             static unsigned char test(Ch ch)
             {
+                if (ch >= 256) return 1;
                 return internal::lookup_tables<0>::lookup_text_pure_with_ws[static_cast<unsigned char>(ch)];
             }
         };
@@ -1527,6 +1533,7 @@ namespace rapidxml
         {
             static unsigned char test(Ch ch)
             {
+                if (ch >= 256) return 1;
                 if (Quote == Ch('\''))
                     return internal::lookup_tables<0>::lookup_attribute_data_1[static_cast<unsigned char>(ch)];
                 if (Quote == Ch('\"'))
@@ -1541,6 +1548,7 @@ namespace rapidxml
         {
             static unsigned char test(Ch ch)
             {
+                if (ch >= 256) return 1;
                 if (Quote == Ch('\''))
                     return internal::lookup_tables<0>::lookup_attribute_data_1_pure[static_cast<unsigned char>(ch)];
                 if (Quote == Ch('\"'))
@@ -1698,7 +1706,7 @@ namespace rapidxml
                                 while (1)
                                 {
                                     unsigned char digit = internal::lookup_tables<0>::lookup_digits[static_cast<unsigned char>(*src)];
-                                    if (digit == 0xFF)
+                                    if (*src >= 256 || digit == 0xFF)
                                         break;
                                     code = code * 16 + digit;
                                     ++src;
@@ -1712,7 +1720,7 @@ namespace rapidxml
                                 while (1)
                                 {
                                     unsigned char digit = internal::lookup_tables<0>::lookup_digits[static_cast<unsigned char>(*src)];
-                                    if (digit == 0xFF)
+                                    if (src >= 256 || digit == 0xFF)
                                         break;
                                     code = code * 10 + digit;
                                     ++src;
