@@ -403,7 +403,7 @@ namespace rapidxml
     //! If required, you can tweak <code>RAPIDXML_STATIC_POOL_SIZE</code>, <code>RAPIDXML_DYNAMIC_POOL_SIZE</code> and <code>RAPIDXML_ALIGNMENT</code>
     //! to obtain best wasted memory to performance compromise.
     //! To do it, define their values before rapidxml.hpp file is included.
-    //! \param Ch Character type of created nodes.
+    //! \tparam Ch Character type of created nodes.
     template<class Ch = char>
     class memory_pool
     {
@@ -672,7 +672,7 @@ namespace rapidxml
 
     //! Base class for xml_node and xml_attribute implementing common functions:
     //! name(), name_size(), value(), value_size() and parent().
-    //! \param Ch Character type to use
+    //! \tparam Ch Character type to use
     template<class Ch = char>
     class xml_base
     {
@@ -836,7 +836,7 @@ namespace rapidxml
     //! Each attribute has name and value strings, which are available through name() and value() functions (inherited from xml_base).
     //! Note that after parse, both name and value of attribute will point to interior of source text used for parsing.
     //! Thus, this text must persist in memory for the lifetime of attribute.
-    //! \param Ch Character type to use.
+    //! \tparam Ch Character type to use.
     template<class Ch = char>
     class xml_attribute: public xml_base<Ch>
     {
@@ -928,7 +928,7 @@ namespace rapidxml
     //! <br><br>
     //! Note that after parse, both name and value of node, if any, will point interior of source text used for parsing.
     //! Thus, this text must persist in the memory for the lifetime of node.
-    //! \param Ch Character type to use.
+    //! \tparam Ch Character type to use.
     template<class Ch = char>
     class xml_node: public xml_base<Ch>
     {
@@ -1396,7 +1396,7 @@ namespace rapidxml
     //! parse() function allocates memory for nodes and attributes by using functions of xml_document,
     //! which are inherited from memory_pool.
     //! To access root node of the document, use the document itself, as if it was an xml_node.
-    //! \param Ch Character type to use.
+    //! \tparam Ch Character type to use.
     template<class Ch = char>
     class xml_document: public xml_node<Ch>, public memory_pool<Ch>
     {
@@ -1472,6 +1472,7 @@ namespace rapidxml
         {
             static unsigned char test(Ch ch)
             {
+                if (ch >= 256) return 0;
                 return internal::lookup_tables<0>::lookup_whitespace[static_cast<unsigned char>(ch)];
             }
         };
@@ -1481,6 +1482,7 @@ namespace rapidxml
         {
             static unsigned char test(Ch ch)
             {
+                if (ch >= 256) return 1;
                 return internal::lookup_tables<0>::lookup_node_name[static_cast<unsigned char>(ch)];
             }
         };
@@ -1490,6 +1492,7 @@ namespace rapidxml
         {
             static unsigned char test(Ch ch)
             {
+                if (ch >= 256) return 1;
                 return internal::lookup_tables<0>::lookup_attribute_name[static_cast<unsigned char>(ch)];
             }
         };
@@ -1499,6 +1502,7 @@ namespace rapidxml
         {
             static unsigned char test(Ch ch)
             {
+                if (ch >= 256) return 1;
                 return internal::lookup_tables<0>::lookup_text[static_cast<unsigned char>(ch)];
             }
         };
@@ -1508,6 +1512,7 @@ namespace rapidxml
         {
             static unsigned char test(Ch ch)
             {
+                if (ch >= 256) return 1;
                 return internal::lookup_tables<0>::lookup_text_pure_no_ws[static_cast<unsigned char>(ch)];
             }
         };
@@ -1517,6 +1522,7 @@ namespace rapidxml
         {
             static unsigned char test(Ch ch)
             {
+                if (ch >= 256) return 1;
                 return internal::lookup_tables<0>::lookup_text_pure_with_ws[static_cast<unsigned char>(ch)];
             }
         };
@@ -1527,6 +1533,7 @@ namespace rapidxml
         {
             static unsigned char test(Ch ch)
             {
+                if (ch >= 256) return 1;
                 if (Quote == Ch('\''))
                     return internal::lookup_tables<0>::lookup_attribute_data_1[static_cast<unsigned char>(ch)];
                 if (Quote == Ch('\"'))
@@ -1541,6 +1548,7 @@ namespace rapidxml
         {
             static unsigned char test(Ch ch)
             {
+                if (ch >= 256) return 1;
                 if (Quote == Ch('\''))
                     return internal::lookup_tables<0>::lookup_attribute_data_1_pure[static_cast<unsigned char>(ch)];
                 if (Quote == Ch('\"'))
@@ -1698,7 +1706,7 @@ namespace rapidxml
                                 while (1)
                                 {
                                     unsigned char digit = internal::lookup_tables<0>::lookup_digits[static_cast<unsigned char>(*src)];
-                                    if (digit == 0xFF)
+                                    if (*src >= 256 || digit == 0xFF)
                                         break;
                                     code = code * 16 + digit;
                                     ++src;
@@ -1712,7 +1720,7 @@ namespace rapidxml
                                 while (1)
                                 {
                                     unsigned char digit = internal::lookup_tables<0>::lookup_digits[static_cast<unsigned char>(*src)];
-                                    if (digit == 0xFF)
+                                    if (*src >= 256 || digit == 0xFF)
                                         break;
                                     code = code * 10 + digit;
                                     ++src;
