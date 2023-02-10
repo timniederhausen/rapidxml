@@ -31,6 +31,13 @@ namespace rapidxml
         {
         }
 
+        node_iterator(xml_node<Ch>* node)
+            : m_cur(node)
+            , m_prev(0)
+            , m_flags(0)
+        {
+        }
+
         node_iterator(xml_node<Ch>* node, xml_node<Ch>* prev,
                       unsigned char flags)
             : m_cur(node)
@@ -132,6 +139,13 @@ namespace rapidxml
 
         attribute_iterator()
             : m_cur(0)
+            , m_prev(0)
+            , m_flags(0)
+        {
+        }
+
+        attribute_iterator(xml_attribute<Ch>* attr)
+            : m_cur(attr)
             , m_prev(0)
             , m_flags(0)
         {
