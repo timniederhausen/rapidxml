@@ -1,8 +1,5 @@
 # RapidXml
 
-[![Build Status](https://travis-ci.org/timniederhausen/rapidxml.svg?branch=master)](https://travis-ci.org/timniederhausen/rapidxml)
-[![Build status](https://ci.appveyor.com/api/projects/status/85wrw93nv54diuu1/branch/master?svg=true)](https://ci.appveyor.com/project/timniederhausen/rapidxml/branch/master)
-
 This is a fork of Marcin Kalicinski's RapidXml library.
 
 ## Changes
