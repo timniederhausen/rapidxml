@@ -60,6 +60,14 @@ if (RAPIDXML_INSTALL)
           PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/rapidxml"
           RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
+  # Install header files
+  install(FILES
+          rapidxml.hpp
+          rapidxml_iterators.hpp
+          rapidxml_print.hpp
+          rapidxml_utils.hpp
+          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rapidxml)
+
   # Use a namespace because CMake provides better diagnostics for namespaced
   # imported targets.
   export(TARGETS ${INSTALL_TARGETS} NAMESPACE rapidxml::
