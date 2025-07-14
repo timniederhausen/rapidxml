@@ -12,7 +12,7 @@ concurrency:
 jobs:
   build:
     name: build
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     continue-on-error: true
 
     strategy:
