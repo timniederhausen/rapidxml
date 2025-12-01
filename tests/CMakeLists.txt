@@ -8,6 +8,7 @@ macro(rapidxml_add_test tgt_name)
 
 	# TODO(tim): Only set this for tests that use TinyXML
 	target_compile_definitions(rapidxml.${tgt_name} PRIVATE TIXML_USE_STL=1)
+	set_property(TARGET rapidxml.${tgt_name} PROPERTY CXX_STANDARD 11)
 
 	set_target_properties(rapidxml.${tgt_name} PROPERTIES
 		OUTPUT_NAME ${tgt_name}
